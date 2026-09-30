@@ -6,6 +6,7 @@ import Home from "./pages/private/Home";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import Ideas from "./pages/private/Ideas";
+import NewIdea from "./pages/private/NewIdea";
 import IdeaDetails from "./pages/private/IdeaDetails";
 import Profile from "./pages/private/Profile";
 import Error from "./pages/Error";
@@ -31,6 +32,14 @@ function App() {
               </Private>
             }
           />
+<Route
+  path="/ideas/new"
+  element={
+    <Private>
+      <NewIdea />
+    </Private>
+  }
+/>
           <Route
             path="/ideas/:ideaid"
             element={
