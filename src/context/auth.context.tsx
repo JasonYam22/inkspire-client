@@ -10,7 +10,7 @@ function AuthWrapper({ children }: {children: ReactNode}) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loggedUserId, setLoggedUserId] = useState(null);
   const [isVerifyingUser, setIsVerifyingUser] = useState(true);
-  const [loggedUserRole, setLoggedUserRole] = useState(null);
+ const [loggedUserRole, setLoggedUserRole] = useState(null); 
 
   const verifyUser = async () => {
     try {
@@ -19,8 +19,7 @@ function AuthWrapper({ children }: {children: ReactNode}) {
       // the token is valid
       setIsLoggedIn(true);
       setLoggedUserId(response.data.payload.id);
-
-      setLoggedUserRole(response.data.payload.role); // only for roles
+      setLoggedUserRole(response.data.payload.role);
       setIsVerifyingUser(false);
     } catch (error) {
       // the token is not valid
