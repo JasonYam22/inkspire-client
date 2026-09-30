@@ -30,6 +30,13 @@ function AuthWrapper({ children }: {children: ReactNode}) {
     }
   };
 
+const logoutUser = () => {
+  localStorage.removeItem("authToken");
+  setIsLoggedIn(false);
+  setLoggedUserId(null);
+  setLoggedUserRole(null);
+};
+
   useEffect(() => {
     verifyUser(); // we call this when the app loads for the first time to check if the user already has a valid token
   }, []);
@@ -42,6 +49,7 @@ function AuthWrapper({ children }: {children: ReactNode}) {
     verifyUser,
     loggedUserRole,
     setLoggedUserRole,
+    logoutUser
   };
 
     if (isVerifyingUser) {

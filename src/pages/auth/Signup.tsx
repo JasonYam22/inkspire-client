@@ -8,11 +8,17 @@ function Signup() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("USER");
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
-  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value);
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setEmail(e.target.value);
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setUsername(e.target.value);
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setPassword(e.target.value);
+  const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
+    setRole(e.target.value);
 
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -21,6 +27,7 @@ function Signup() {
       email,
       username,
       password,
+      role
     };
 
     try {
@@ -43,7 +50,7 @@ function Signup() {
   };
 
   return (
- <div>
+    <div>
       {/* Link to Login */}
       <div>
         <p>
@@ -58,7 +65,7 @@ function Signup() {
 
       {/* Username input */}
       <form onSubmit={handleSignup}>
-         <div>
+        <div>
           <label>Username</label>
           <input
             type="text"
@@ -69,8 +76,7 @@ function Signup() {
           />
         </div>
 
-
-      {/* Email input */}
+        {/* Email input */}
         <div>
           <label>Email</label>
           <input
@@ -93,15 +99,21 @@ function Signup() {
             required
           />
         </div>
+        {/* Set Role */}
+        <div>
+          <label>I am a...</label>
+          <select value={role} onChange={handleRoleChange}>
+            <option value="USER">Tattoo enthusiast</option>
+            <option value="ARTIST">Artist</option>
+          </select>
+        </div>
 
-        {errorMessage && (
-          <p>{errorMessage}</p>
-        )}
+        {errorMessage && <p>{errorMessage}</p>}
 
         <button type="submit">Sign up</button>
       </form>
     </div>
-  )
+  );
 }
 
-export default Signup
+export default Signup;

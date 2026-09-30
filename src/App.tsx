@@ -40,7 +40,7 @@ function App() {
             }
           />
           <Route
-            path="/profile"
+            path="/users/user"
             element={
               <Private>
                 <Profile />
