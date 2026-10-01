@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import "./index.css";
+import background from "./assets/background.png";
 
 //pages
 import Home from "./pages/private/Home";
@@ -19,7 +20,11 @@ import { AuthWrapper } from "./context/auth.context";
 
 function App() {
   return (
-    <div>
+     <div className="relative min-h-screen">
+    <div
+      className="fixed inset-0 bg-cover bg-center blur-sm scale-110 -z-10"
+      style={{ backgroundImage: `url(${background})` }}
+    />
       <AuthWrapper>
         <Navbar />
         <Routes>
@@ -41,7 +46,7 @@ function App() {
   }
 />
           <Route
-            path="/ideas/:ideaid"
+            path="/ideas/:ideaId"
             element={
               <Private>
                 <IdeaDetails />

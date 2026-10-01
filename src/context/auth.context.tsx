@@ -54,7 +54,7 @@ const logoutUser = () => {
 
     if (isVerifyingUser) {
       return (
-        <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#15171B] text-[#F3F1ED]">
+        <div className="flex min-h-screen flex-col items-center justify-center gap-4  text-[#F3F1ED]">
           <Loader2 className="h-10 w-10 animate-spin text-[#FF5A36]" />
           <p
             className="text-sm font-bold uppercase tracking-[0.18em] text-[#A6ABB2]"
