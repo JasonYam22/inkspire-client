@@ -149,7 +149,7 @@ function EditIdea() {
               />
             ) : (
               <>
-                <span className="text-4xl">🖼️</span>
+                <span className="text-4xl"></span>
                 <span className="text-white font-semibold text-sm">
                   Click to add an image
                 </span>
