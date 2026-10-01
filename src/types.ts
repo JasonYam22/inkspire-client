@@ -21,6 +21,7 @@ export type User = {
   imageUrl: string | null;
   role: string;
   createdAt: string;
+  
 };
 
 export type ExploreIdea = TattooIdea & {

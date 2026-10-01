@@ -9,7 +9,7 @@ function ExploreDetails() {
 
   useEffect(() => {
     service
-      .get(`/ideas/explore/${ideaId}`)
+      .get(`/ideas/${ideaId}`)
       .then((response) => {
         setIdea(response.data);
       })
