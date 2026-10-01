@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import service from "../../services/index.services";
 import type { ExploreIdea } from "../../types";
-import type { User } from "../../types";
-
 
 function ExploreDetails() {
   const { ideaId } = useParams();

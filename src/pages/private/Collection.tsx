@@ -39,9 +39,15 @@ function Collection() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 max-w-5xl mx-auto">
-          {ideas.map((idea) => (
-            <IdeaCard key={idea.id} tattooIdea={idea} />
-          ))}
+ {ideas.map((idea) => (
+  <IdeaCard
+    key={idea.id}
+    tattooIdea={idea}
+    onRemove={(ideaId) =>
+      setIdeas((prev) => prev.filter((i) => i.id !== ideaId))
+    }
+  />
+))}
         </div>
       )}
     </div>

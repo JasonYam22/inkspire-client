@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import service from "../../services/index.services";
 import type { TattooIdea } from "../../types";
-import { Heart } from "lucide-react";
 
 function IdeaDetails() {
   const { ideaId } = useParams();
@@ -36,17 +35,6 @@ const navigate = useNavigate()
     });
 };
 
-  const handleToggleFavorite = () => {
-    service
-      .put(`/ideas/${ideaId}`, { isFavorite: !tattooIdea.isFavorite })
-      .then(() => {
-        setTattooIdea({ ...tattooIdea, isFavorite: !tattooIdea.isFavorite });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
   return (
     <div className="min-h-screen p-6">
       <Link to="/ideas" className="text-zinc-600 hover:text-zinc-900 text-sm">
@@ -63,19 +51,6 @@ const navigate = useNavigate()
             />
           )}
 
-          <button
-            onClick={handleToggleFavorite}
-            className="absolute top-2.5 right-2.5 p-2 rounded-full bg-white/90 backdrop-blur-md border border-zinc-200/80 shadow-md hover:scale-110 active:scale-95 transition-all"
-            aria-label="Favorite tattoo idea"
-          >
-            <Heart
-              className={`w-4 h-4 transition-colors ${
-                tattooIdea.isFavorite
-                  ? "text-red-500 fill-red-500"
-                  : "text-zinc-600 hover:text-red-500"
-              }`}
-            />
-          </button>
         </div>
 
         <div className="p-2 pt-4 flex flex-col gap-2">

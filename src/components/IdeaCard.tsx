@@ -6,20 +6,31 @@ import { Link } from "react-router-dom"
 
 type Props = {
   tattooIdea: TattooIdea;
+  onRemove?: (ideaId: string) => void;
 };
 
-function IdeaCard({ tattooIdea }: Props) {
+function IdeaCard({ tattooIdea, onRemove }: Props) {
 
 const [isFavorite, setIsFavorite] = useState(tattooIdea.isFavorite)
 
-const handleToggleFavorite = () => {
-  service.put(`/ideas/${tattooIdea.id}`, {isFavorite: !isFavorite})
-  .then(() => {
-    setIsFavorite(!isFavorite)
-  })
-  .catch((error: any) => {
-    console.log(error)
-  })
+const handleHeartClick = () => {
+  if (onRemove) {
+    service.delete(`/ideas/${tattooIdea.id}`)
+    .then(() => {
+      onRemove(tattooIdea.id)
+    })
+    .catch((error: any) => {
+      console.log(error)
+    })
+  } else {
+    service.put(`/ideas/${tattooIdea.id}`, {isFavorite: !isFavorite})
+    .then(() => {
+      setIsFavorite(!isFavorite)
+    })
+    .catch((error: any) => {
+      console.log(error)
+    })
+  }
 }
 
 return (
@@ -39,13 +50,13 @@ return (
       )}
 
       <button
-        onClick={handleToggleFavorite}
+        onClick={handleHeartClick}
         className="absolute top-2.5 right-2.5 p-2 rounded-full bg-white/90 backdrop-blur-md shadow-md hover:scale-110 active:scale-95 transition-all"
-        aria-label="Favorite tattoo idea"
+        aria-label={onRemove ? "Remove from collection" : "Favorite tattoo idea"}
       >
         <Heart
           className={`w-4 h-4 transition-colors ${
-            isFavorite
+            onRemove || isFavorite
               ? "text-red-500 fill-red-500"
               : "text-zinc-600 hover:text-red-500"
           }`}
