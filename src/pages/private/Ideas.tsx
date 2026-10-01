@@ -7,21 +7,21 @@ import { Link } from "react-router-dom";
 
 function Ideas() {
 
-/*   const navigate = useNavigate() */
-
   const [ideas, setIdeas] = useState<TattooIdea[]>([])
 
   useEffect(() => {
     service
       .get("/ideas")
-      .then((response) => {
-        setIdeas(response.data);
+  .then((response) => {
+  setIdeas(response.data.filter((idea: TattooIdea) => !idea.isSaved));
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
 
+  const favorites = ideas.filter((idea) => idea.isFavorite);
+  const others = ideas.filter((idea) => !idea.isFavorite);
 
 return (
   <div>
@@ -44,11 +44,28 @@ return (
         + Add New Idea
       </Link>
     </div>
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 p-6">
-      {ideas.map((idea) => (
-        <IdeaCard key={idea.id} tattooIdea={idea} />
-      ))}
-    </div>
+
+    {favorites.length > 0 && (
+      <>
+        <h2 className="text-xl font-bold text-white px-6">Favorites</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
+          {favorites.map((idea) => (
+            <IdeaCard key={idea.id} tattooIdea={idea} />
+          ))}
+        </div>
+      </>
+    )}
+
+    {others.length > 0 && (
+      <>
+        <h2 className="text-xl font-bold text-white px-6">Other ideas</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 p-6">
+          {others.map((idea) => (
+            <IdeaCard key={idea.id} tattooIdea={idea} />
+          ))}
+        </div>
+      </>
+    )}
   </div>
 );
 }

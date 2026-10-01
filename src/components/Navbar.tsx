@@ -28,12 +28,25 @@ function Navbar() {
           to="/ideas" 
           className="text-zinc-400 hover:text-zinc-100 transition-colors"
         >
-          Ideas
+          Add Ideas
         </Link>
+        <Link
+  to="/explore"
+  className="text-zinc-400 hover:text-zinc-100 transition-colors"
+>
+  Explore
+</Link>
+<Link
+  to="/collection"
+  className="text-zinc-400 hover:text-zinc-100 transition-colors"
+>
+  Collection
+</Link>
         <Link 
           to="/users/user" 
           className="text-zinc-400 hover:text-zinc-100 transition-colors"
         >
+          
           Profile
         </Link>
         <button 

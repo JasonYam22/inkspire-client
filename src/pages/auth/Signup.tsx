@@ -49,71 +49,80 @@ function Signup() {
     }
   };
 
-  return (
-    <div>
-      {/* Link to Login */}
-      <div>
-        <p>
-          <Link to="/login">Already a member?</Link>
-        </p>
-      </div>
+  const inputStyle =
+  "w-full bg-zinc-800/80 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-400";
 
-      {/* Signup */}
-      <div>
-        <h1>Sign up</h1>
-      </div>
+return (
+  <div className="min-h-[85vh] flex items-center justify-center p-6">
+    <div className="w-full max-w-sm bg-zinc-900/70 backdrop-blur-md border border-zinc-700 rounded-2xl p-6 shadow-lg">
+      <h1 className="text-2xl font-bold text-zinc-100 mb-1">Sign up</h1>
+      <p className="text-sm text-zinc-400 mb-5">Start saving your tattoo ideas.</p>
 
-      {/* Username input */}
-      <form onSubmit={handleSignup}>
-        <div>
-          <label>Username</label>
+      <form onSubmit={handleSignup} className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-zinc-400">Username</label>
           <input
             type="text"
             name="username"
             value={username}
             onChange={handleUsernameChange}
             required
+            className={inputStyle}
           />
         </div>
 
-        {/* Email input */}
-        <div>
-          <label>Email</label>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-zinc-400">Email</label>
           <input
             type="email"
             name="email"
             value={email}
             onChange={handleEmailChange}
             required
+            className={inputStyle}
           />
         </div>
 
-        {/* Password input */}
-        <div>
-          <label>Password</label>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-zinc-400">Password</label>
           <input
-            type="Password"
-            name="Password"
+            type="password"
+            name="password"
             value={password}
             onChange={handlePasswordChange}
             required
+            className={inputStyle}
           />
         </div>
-        {/* Set Role */}
-        <div>
-          <label>I am a...</label>
-          <select value={role} onChange={handleRoleChange}>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-zinc-400">I am a...</label>
+          <select value={role} onChange={handleRoleChange} className={inputStyle}>
             <option value="USER">Tattoo enthusiast</option>
             <option value="ARTIST">Artist</option>
           </select>
         </div>
 
-        {errorMessage && <p>{errorMessage}</p>}
+        {errorMessage && (
+          <p className="text-sm text-red-400 font-semibold">{errorMessage}</p>
+        )}
 
-        <button type="submit">Sign up</button>
+        <button
+          type="submit"
+          className="mt-1 py-2 text-sm font-semibold rounded-xl bg-zinc-200 text-zinc-900 hover:bg-white transition-all"
+        >
+          Sign up
+        </button>
       </form>
+
+      <p className="text-sm text-zinc-400 mt-4 text-center">
+        <Link to="/login" className="text-zinc-200 hover:underline">
+          Already a member?
+        </Link>
+      </p>
     </div>
-  );
+  </div>
+);
 }
 
 export default Signup;
