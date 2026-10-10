@@ -6,6 +6,7 @@ import background from "./assets/background.png";
 import Home from "./pages/private/Home";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
+import VerifyEmail from "./pages/auth/VerifyEmail"
 import Ideas from "./pages/private/Ideas";
 import NewIdea from "./pages/private/NewIdea";
 import IdeaDetails from "./pages/private/IdeaDetails";
@@ -90,6 +91,7 @@ function App() {
             }
           />
           <Route path="/login" element={<Login />} />
+             <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="*" element={<Error />} />
         </Routes>
