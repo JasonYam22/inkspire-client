@@ -59,7 +59,7 @@ return (
       {signedUp ? (
         <div className="text-center">
           <h1 className="text-2xl font-bold text-zinc-100 mb-1">Check your inbox</h1>
-          <p className="text-sm text-zinc-400 mb-5">
+          <p className="text-sm text-zinc-400">
             We sent a verification link to your email. Click it, then log in.
           </p>
         </div>
