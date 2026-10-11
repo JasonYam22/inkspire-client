@@ -8,6 +8,7 @@ const [searchParams] = useSearchParams()
 const token = searchParams.get("token")
 
 const [ status, setStatus ] = useState<"loading" | "verified" | "error">("loading");
+const [errorMessage, setErrorMessage] = useState("The link is invalid or expired.");
 
 const requestSent = useRef(false)
 
@@ -25,7 +26,10 @@ service
 .then(() => {
     setStatus("verified")
 })
-.catch(() => {
+.catch((error) => {
+    setErrorMessage(
+        error.response?.data?.errorMessage || "Something went wrong, Please try again."
+    )
     setStatus("error")
 })
 }, [token])
@@ -56,9 +60,7 @@ service
         {status === "error" && (
           <>
             <h1 className="text-2xl font-bold text-zinc-100 mb-1">Verification failed</h1>
-            <p className="text-sm text-red-400 font-semibold mb-5">
-              The link is invalid or expired.
-            </p>
+           <p className="text-sm text-red-400 font-semibold mb-5">{errorMessage}</p>
             <Link to="/signup" className="text-sm text-zinc-200 hover:underline">
               Back to signup
             </Link>
