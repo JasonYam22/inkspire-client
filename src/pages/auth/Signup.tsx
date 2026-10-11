@@ -62,12 +62,6 @@ return (
           <p className="text-sm text-zinc-400 mb-5">
             We sent a verification link to your email. Click it, then log in.
           </p>
-          <Link
-            to="/login"
-            className="inline-block py-2 px-6 text-sm font-semibold rounded-xl bg-zinc-200 text-zinc-900 hover:bg-white transition-all"
-          >
-            Go to login
-          </Link>
         </div>
       ) : (
         <>
