@@ -8,6 +8,8 @@ import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import VerifyEmail from "./pages/auth/VerifyEmail"
 import ResetPassword from "./pages/auth/ResetPassword";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+
 import Ideas from "./pages/private/Ideas";
 import NewIdea from "./pages/private/NewIdea";
 import IdeaDetails from "./pages/private/IdeaDetails";
@@ -94,6 +96,7 @@ function App() {
           <Route path="/login" element={<Login />} />
              <Route path="/verify-email" element={<VerifyEmail />} />
              <Route path="/reset-password" element={<ResetPassword />} />
+             <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="*" element={<Error />} />
         </Routes>
