@@ -5,54 +5,67 @@ import { Link } from "react-router-dom"
 function ForgotPassword() {
 
     const [email, setEmail] = useState("")
-    const [message, setMessage] = useState ("")
+    const [successMessage, setSuccessMessage] = useState ("")
 
 const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) =>
     setEmail(e.target.value);
 
-const handleForgotPassword = (e: React.FormEvent<HTMLFormElement>) =>
+const handleForgotPassword = (e: React.FormEvent<HTMLFormElement>) => {
  e.preventDefault()
 
 service.post("/auth/forgot-password", {email})
 .then((response) => {
-    setMessage(response.data.message)
+    setSuccessMessage(response.data.successMessage)
 })
 .catch((error) => {
-    setMessage(error.response?.data?.errorMessage || "Something went wrong") 
+    setSuccessMessage(error.response?.data?.errorsuccessMessage || "Something went wrong") 
 })
+}
 
- return (
-  <div className="min-h-screen bg-zinc-950 flex items-center justify-center px-4">
-    <div className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
-      <h1 className="text-xl font-bold text-zinc-100 mb-2">Forgot password?</h1>
-      <p className="text-sm text-zinc-400 mb-6">
-        Enter your email and we'll send you a link to reset it.
-      </p>
+const inputStyle =
+  "w-full bg-zinc-800/80 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-400";
 
-      <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
+return (
+    <div>
+    <div className="min-h-[85vh] flex items-center justify-center p-6">
+  <div className="w-full max-w-sm bg-zinc-900/70 backdrop-blur-md border border-zinc-700 rounded-2xl p-6 shadow-lg">
+    <h1 className="text-2xl font-bold text-zinc-100 mb-1">Forgot password?</h1>
+    <p className="text-sm text-zinc-400 mb-5">
+      Enter your email and we'll send you a link to reset it.
+    </p>
+
+        <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1">
+        <label className="text-xs font-semibold text-zinc-400">Email</label>
         <input
           type="email"
-          placeholder="Email"
+          name="email"
           value={email}
           onChange={handleEmail}
-          className="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-zinc-500"
+          required
+          className={inputStyle}
         />
-        <button
-          type="submit"
-          className="w-full rounded-lg bg-zinc-100 text-zinc-900 font-semibold py-2 text-sm hover:bg-white"
-        >
-          Send reset link
-        </button>
-      </form>
+      </div>
 
-      {message && <p className="text-sm text-zinc-300 mt-4">{message}</p>}
+      <button
+        type="submit"
+        className="mt-1 py-2 text-sm font-semibold rounded-xl bg-zinc-200 text-zinc-900 hover:bg-white transition-all"
+      >
+        Send reset link
+      </button>
+    </form>
 
-      <Link to="/login" className="block text-sm text-zinc-400 hover:text-zinc-200 mt-6">
+    {successMessage && <p className="text-sm text-zinc-300 font-semibold mt-4">{successMessage}</p>}
+
+    <p className="text-sm text-zinc-400 mt-4 text-center">
+      <Link to="/login" className="text-zinc-200 hover:underline">
         Back to login
       </Link>
+    </p>
+    </div>
     </div>
   </div>
-);
+)
 }
 
 export default ForgotPassword
