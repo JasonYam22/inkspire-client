@@ -99,6 +99,11 @@ return (
       </form>
 
       <p className="text-sm text-zinc-400 mt-4 text-center">
+         <Link to="/forgot-password" className="text-zinc-200 hover:underline">
+          Forgot password?
+        </Link>
+        <br />
+        <br />
         <Link to="/signup" className="text-zinc-200 hover:underline">
           New here?
         </Link>
