@@ -21,6 +21,9 @@ function Signup() {
   const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setRole(e.target.value);
 
+   const handleGoogleSignUp = () => {
+  window.location.href = `${import.meta.env.VITE_SERVER_URL}/api/auth/google?mode=signup`;
+};
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -125,7 +128,7 @@ return (
             </button>
 
             <button
-  type="button"
+  type="button" onClick={handleGoogleSignUp}
   className="mt-1 py-2 px-4 text-sm font-semibold rounded-xl bg-zinc-200 text-zinc-900 hover:bg-white transition-all flex items-center justify-center gap-2"
 >
   

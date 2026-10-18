@@ -1,5 +1,5 @@
-import { useContext, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { AuthContext } from "../../context/auth.context";
 import service from "../../services/index.services";
 
@@ -11,9 +11,12 @@ function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [searchParams] = useSearchParams()
   const [errorMessage, setErrorMessage] = useState(null);
 
+  const handleGoogleLogin = () => {
+  window.location.href = `${import.meta.env.VITE_SERVER_URL}/api/auth/google?mode=login`;
+};
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
 
@@ -29,7 +32,6 @@ function Login() {
     try {
 
       const response = await service.post("/auth/login", body);
-      console.log(response);
 
       // store the token in localStorage
       localStorage.setItem("authToken", response.data.authToken);
@@ -51,6 +53,16 @@ function Login() {
       }
     }
   };
+
+  useEffect(() => {
+    const token = searchParams.get("token")
+
+    if (token) {
+      localStorage.setItem("authToken", token)
+      setIsLoggedIn(true)
+      navigate("/", ({replace: true}))
+    }
+  }, [searchParams, navigate, setIsLoggedIn])
 
   const inputStyle =
   "w-full bg-zinc-800/80 border border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-zinc-400";
@@ -98,7 +110,7 @@ return (
         </button>
 
      <button
-  type="button"
+  type="button" onClick={handleGoogleLogin}
   className="mt-1 py-2 px-4 text-sm font-semibold rounded-xl bg-zinc-200 text-zinc-900 hover:bg-white transition-all flex items-center justify-center gap-2"
 >
   
