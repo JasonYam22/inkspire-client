@@ -7,7 +7,7 @@ function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [message, setMessage] = useState("");
 
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
@@ -31,7 +31,7 @@ function ResetPassword() {
     service
       .post("/auth/reset-password", { token, password })
       .then((response) => {
-        setSuccessMessage(response.data.message);
+        setMessage(response.data.message);
       })
       .catch((error) => {
         setErrorMessage(
@@ -61,12 +61,12 @@ function ResetPassword() {
         >
           Request a new link
         </Link>
-      </div>) : successMessage ? (
+      </div>) : message ? (
       <div className="text-center">
         <h1 className="text-2xl font-bold text-zinc-100 mb-1">
           Password updated
         </h1>
-        <p className="text-sm text-zinc-400 mb-5">{successMessage}</p>
+        <p className="text-sm text-zinc-400 mb-5">{message}</p>
         <Link
           to="/login"
           className="inline-block py-2 px-6 text-sm font-semibold rounded-xl bg-zinc-200 text-zinc-900 hover:bg-white transition-all"

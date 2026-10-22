@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import service from "../../services/index.services";
 
 function Signup() {
@@ -10,7 +10,18 @@ function Signup() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("USER");
   const [signedUp, setSignedUp] = useState(false)
+    const [searchParams] = useSearchParams()
+
   const [errorMessage, setErrorMessage] = useState(null);
+  
+
+  const urlErrors: Record<string, string> = {
+  "exists": "An account with this email already exists. Please log in.",
+}
+  const urlError = searchParams.get("error")
+  const urlErrorMessage = urlError ? urlErrors[urlError] : null
+
+  
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setEmail(e.target.value);
@@ -116,9 +127,9 @@ return (
               </select>
             </div>
 
-            {errorMessage && (
-              <p className="text-sm text-red-400 font-semibold">{errorMessage}</p>
-            )}
+            {(errorMessage || urlErrorMessage) && (
+  <p className="text-sm text-red-400 font-semibold">{errorMessage || urlErrorMessage}</p>
+)}
 
             <button
               type="submit"

@@ -14,6 +14,13 @@ function Login() {
   const [searchParams] = useSearchParams()
   const [errorMessage, setErrorMessage] = useState(null);
 
+const urlError = searchParams.get("error")
+const urlErrors: Record<string, string> = {
+  "no-account": "No account found for this Google account. Please sign up first.",
+}
+  const urlErrorMessage = urlError ? urlErrors[urlError] : null
+
+
   const handleGoogleLogin = () => {
   window.location.href = `${import.meta.env.VITE_SERVER_URL}/api/auth/google?mode=login`;
 };
@@ -98,9 +105,9 @@ return (
           />
         </div>
 
-        {errorMessage && (
-          <p className="text-sm text-red-400 font-semibold">{errorMessage}</p>
-        )}
+      {(errorMessage || urlErrorMessage) && (
+  <p className="text-sm text-red-400 font-semibold">{errorMessage || urlErrorMessage}</p>
+)}
 
         <button
           type="submit"

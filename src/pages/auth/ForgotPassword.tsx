@@ -5,7 +5,7 @@ import { Link } from "react-router-dom"
 function ForgotPassword() {
 
     const [email, setEmail] = useState("")
-    const [successMessage, setSuccessMessage] = useState ("")
+    const [message, setMessage] = useState ("")
 
 const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) =>
     setEmail(e.target.value);
@@ -15,10 +15,10 @@ const handleForgotPassword = (e: React.FormEvent<HTMLFormElement>) => {
 
 service.post("/auth/forgot-password", {email})
 .then((response) => {
-    setSuccessMessage(response.data.successMessage)
+    setMessage(response.data.message)
 })
 .catch((error) => {
-    setSuccessMessage(error.response?.data?.errorsuccessMessage || "Something went wrong") 
+    setMessage(error.response?.data?.errormessage || "Something went wrong") 
 })
 }
 
@@ -55,7 +55,7 @@ return (
       </button>
     </form>
 
-    {successMessage && <p className="text-sm text-zinc-300 font-semibold mt-4">{successMessage}</p>}
+    {message && <p className="text-sm text-zinc-300 font-semibold mt-4">{message}</p>}
 
     <p className="text-sm text-zinc-400 mt-4 text-center">
       <Link to="/login" className="text-zinc-200 hover:underline">
