@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import service from "../../services/index.services";
+import { getIdea, deleteIdea } from "../../services/ideas.services";
 import type { TattooIdea } from "../../types";
 
 function IdeaDetails() {
@@ -10,10 +10,12 @@ function IdeaDetails() {
 const navigate = useNavigate()
 
   useEffect(() => {
-    service
-      .get(`/ideas/${ideaId}`)
-      .then((response) => {
-        setTattooIdea(response.data);
+    if(!ideaId) {
+      return
+    }
+  getIdea(ideaId)
+      .then((data) => {
+        setTattooIdea(data);
       })
       .catch((error) => {
         console.log(error);
@@ -25,8 +27,11 @@ const navigate = useNavigate()
   const handleDelete = () => {
   if (!window.confirm("Delete this idea?")) return;
 
-  service
-    .delete(`/ideas/${ideaId}`)
+  if(!ideaId) {
+    return
+  }
+
+    deleteIdea(ideaId)
     .then(() => {
       navigate("/ideas");
     })

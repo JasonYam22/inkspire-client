@@ -2,27 +2,46 @@ import { createContext, useEffect, useState, type ReactNode } from "react";
 import service from "../services/index.services";
 import { Loader2 } from "lucide-react";
 
-// Context Component => shares the context with the app
-const AuthContext = createContext<any>(null);
+// Inside auth.context.tsx
+import { useContext } from "react";
 
-// Wrapper Component => holds the states and functions to the shared
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthWrapper");
+  }
+  return context
+};
+
+interface AuthContextType {
+  isLoggedIn: boolean;
+  setIsLoggedIn: (value: boolean) => void;
+  loggedUserId: string | null;
+  setLoggedUserId: (id: string | null) => void;
+  verifyUser: () => Promise<void>;
+  loggedUserRole: string | null;
+  setLoggedUserRole: (role: string | null) => void;
+  logoutUser: () => void;
+}
+
+const AuthContext = createContext<AuthContextType | null>(null);
+
 function AuthWrapper({ children }: {children: ReactNode}) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loggedUserId, setLoggedUserId] = useState(null);
+  const [loggedUserId, setLoggedUserId] = useState<string | null>(null)
   const [isVerifyingUser, setIsVerifyingUser] = useState(true);
- const [loggedUserRole, setLoggedUserRole] = useState(null); 
+ const [loggedUserRole, setLoggedUserRole] = useState<string | null>(null); 
 
   const verifyUser = async () => {
     try {
       const response = await service.get("/auth/verify");
 
-      // the token is valid
       setIsLoggedIn(true);
       setLoggedUserId(response.data.payload.id);
       setLoggedUserRole(response.data.payload.role);
       setIsVerifyingUser(false);
     } catch (error) {
-      // the token is not valid
+  
       setIsLoggedIn(false);
       setLoggedUserId(null);
       setIsVerifyingUser(false);
@@ -38,10 +57,10 @@ const logoutUser = () => {
 };
 
   useEffect(() => {
-    verifyUser(); // we call this when the app loads for the first time to check if the user already has a valid token
+    verifyUser(); 
   }, []);
 
-  const passedContext = {
+  const passedContext: AuthContextType = {
     isLoggedIn,
     setIsLoggedIn,
     loggedUserId,

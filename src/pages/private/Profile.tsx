@@ -1,10 +1,10 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import service from "../../services/index.services";
-import { AuthContext } from "../../context/auth.context";
+import { useAuth } from "../../context/auth.context"
 import type { User } from "../../types";
 
 function Profile() {
-  const { loggedUserId } = useContext(AuthContext);
+  const { loggedUserId } = useAuth()
   const [user, setUser] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState("");

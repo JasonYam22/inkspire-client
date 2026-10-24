@@ -1,31 +1,25 @@
 import { useEffect, useState } from "react";
-import service from "../../services/index.services";
-import type { ExploreIdea } from "../../types";
 import { Link } from "react-router-dom";
 import { HeartIcon } from "lucide-react";
+import type { ExploreIdea } from "../../types";
+import { getExploreIdeas, toggleSaveIdea } from "../../services/ideas.services";
 
 function Explore() {
   const [ideas, setIdeas] = useState<ExploreIdea[]>([]);
 
   useEffect(() => {
-    service
-      .get("/ideas/explore")
-      .then((response) => {
-        setIdeas(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    getExploreIdeas()
+      .then((data) => setIdeas(data))
+      .catch((error) => console.log(error));
   }, []);
 
   const handleToggleSave = async (ideaId: string) => {
     try {
-      // Clean relative path using your service instance
-      const res = await service.post(`/ideas/explore/${ideaId}/save`);
+      const res = await toggleSaveIdea(ideaId);
 
       setIdeas((prevIdeas) =>
         prevIdeas.map((idea) =>
-          idea.id === ideaId ? { ...idea, isSaved: res.data.isSaved } : idea
+          idea.id === ideaId ? { ...idea, isSaved: res.isSaved } : idea
         )
       );
     } catch (error) {

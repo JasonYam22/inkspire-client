@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { TattooIdea } from "../types";
-import service from "../services/index.services";
 import { Heart } from "lucide-react"
 import { Link } from "react-router-dom"
+import { deleteIdea, toggleFavorite } from "../services/ideas.services";
 
 type Props = {
   tattooIdea: TattooIdea;
@@ -15,21 +15,21 @@ const [isFavorite, setIsFavorite] = useState(tattooIdea.isFavorite)
 
 const handleHeartClick = () => {
   if (onRemove) {
-    service.delete(`/ideas/${tattooIdea.id}`)
-    .then(() => {
-      onRemove(tattooIdea.id)
-    })
-    .catch((error: any) => {
-      console.log(error)
-    })
+    deleteIdea(tattooIdea.id)
+      .then(() => {
+        onRemove(tattooIdea.id)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   } else {
-    service.put(`/ideas/${tattooIdea.id}`, {isFavorite: !isFavorite})
-    .then(() => {
-      setIsFavorite(!isFavorite)
-    })
-    .catch((error: any) => {
-      console.log(error)
-    })
+    toggleFavorite(tattooIdea.id, !isFavorite)
+      .then(() => {
+        setIsFavorite(!isFavorite)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 }
 

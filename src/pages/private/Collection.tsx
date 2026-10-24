@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import service from "../../services/index.services";
+import { getCollection, toggleSaveIdea } from "../../services/ideas.services";
 import type { ExploreIdea } from "../../types";
 import { Link } from "react-router-dom";
 import { HeartIcon } from "lucide-react";
@@ -7,23 +7,18 @@ import { HeartIcon } from "lucide-react";
 function Collection() {
   const [collection, setCollection] = useState<ExploreIdea[]>([]);
 
-  useEffect(() => {
-    service
-      .get("/ideas/collection")
-      .then((response) => {
-        setCollection(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching collection:", error);
-      });
+   useEffect(() => {
+    getCollection()
+      .then((data) => setCollection(data))
+      .catch((error) => console.log(error));
   }, []);
 
   const handleToggleSave = async (ideaId: string) => {
     try {
-      const res = await service.post(`/ideas/explore/${ideaId}/save`);
+      const res = await toggleSaveIdea(ideaId)
 
       // If unhearted, filter it out of the Collection page immediately
-      if (!res.data.isSaved) {
+      if (!res.isSaved) {
         setCollection((prev) => prev.filter((idea) => idea.id !== ideaId));
       }
     } catch (error) {

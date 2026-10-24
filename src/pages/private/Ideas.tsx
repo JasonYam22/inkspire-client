@@ -1,5 +1,5 @@
-/* import { useNavigate } from "react-router-dom" */
-import service from "../../services/index.services";
+
+import { getIdeas } from "../../services/ideas.services";
 import { useEffect, useState } from "react";
 import type { TattooIdea } from "../../types";
 import IdeaCard from "../../components/IdeaCard"
@@ -10,10 +10,9 @@ function Ideas() {
   const [ideas, setIdeas] = useState<TattooIdea[]>([])
 
   useEffect(() => {
-    service
-      .get("/ideas")
-  .then((response) => {
-  setIdeas(response.data.filter((idea: TattooIdea) => !idea.isSaved));
+   getIdeas()
+  .then((data) => {
+  setIdeas(data.filter((idea: TattooIdea) => !idea.isSaved));
       })
       .catch((error) => {
         console.log(error);
@@ -27,7 +26,7 @@ return (
   <div>
     <div>
       <h1 className="text-3xl font-bold text-zinc-900 mt-4 mb-1">
-        Your Collection
+        My Ideas
       </h1>
       <p className="text-zinc-500 mb-2">
         Every tattoo idea you've saved, ready whenever you're ready to book.

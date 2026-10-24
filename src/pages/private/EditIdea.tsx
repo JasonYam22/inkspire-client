@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import service from "../../services/index.services";
+import { getIdea, updateIdea } from "../../services/ideas.services";
 
 const genres = [
   "Traditional", "Neo-Traditional", "Japanese", "Blackwork", "Realism",
@@ -22,10 +22,14 @@ function EditIdea() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    service
-      .get(`/ideas/${ideaId}`)
-      .then((response) => {
-        const idea = response.data;
+
+if (!ideaId) {
+  return
+}
+
+    getIdea(ideaId)
+      .then((data) => {
+        const idea = data;
         setTitle(idea.title);
         setGenre(idea.genre || "");
         setSpot(idea.spot || "");
@@ -59,11 +63,9 @@ function EditIdea() {
     if (image) {
       formData.append("image", image);
     }
+if (!ideaId) return;
 
-    service
-      .put(`/ideas/${ideaId}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
+updateIdea(ideaId, formData)
       .then(() => {
         navigate(`/ideas/${ideaId}`);
       })

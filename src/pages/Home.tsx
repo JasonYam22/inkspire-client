@@ -1,9 +1,9 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Heart, Pencil, Compass } from "lucide-react";
-import { AuthContext } from "../../context/auth.context";
-import service from "../../services/index.services";
-import type { TattooIdea } from "../../types";
+import { useAuth } from "../context/auth.context"
+import service from "../services/index.services";
+import type { TattooIdea } from "../types";
 
 const genres = [
   "Traditional", "Neo-Traditional", "Japanese", "Blackwork", "Realism",
@@ -27,7 +27,7 @@ const formatDate = (date: Date) =>
   date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 
 function Home() {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn } = useAuth();
   const [ideas, setIdeas] = useState<TattooIdea[]>([]);
 
   useEffect(() => {

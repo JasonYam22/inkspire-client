@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import service from "../../services/index.services";
+import { getExploreIdea } from "../../services/ideas.services";
 import type { ExploreIdea } from "../../types";
 
 function ExploreDetails() {
@@ -8,10 +8,13 @@ function ExploreDetails() {
   const [idea, setIdea] = useState<ExploreIdea | null>(null);
 
   useEffect(() => {
-    service
-      .get(`/ideas/${ideaId}`)
-      .then((response) => {
-        setIdea(response.data);
+
+    if(!ideaId) {
+      return
+    }
+  getExploreIdea(ideaId)
+      .then((data) => {
+        setIdea(data);
       })
       .catch((error) => {
         console.log(error);

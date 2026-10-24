@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import service from "../../services/index.services";
+import { createIdea } from "../../services/ideas.services";
 
 const genres = [
   "Traditional", "Neo-Traditional", "Japanese", "Blackwork", "Realism",
@@ -30,10 +30,7 @@ function NewIdea() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // creates an empty container jsut for sending files
     const formData = new FormData();
-    //adds one field at a tim
     formData.append("title", title);
     formData.append("genre", genre);
     formData.append("spot", spot);
@@ -44,19 +41,14 @@ function NewIdea() {
     if (image) {
       formData.append("image", image);
     }
-
-    // formData is the body
-    try {
-      await service.post("/ideas", formData, {
-        // this header is a config object which tells the server that it contains a file
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      navigate("/ideas");
-    } catch (error: any) {
-      console.log(error);
-      setErrorMessage("Could not create idea");
-    }
-  };
+   try {
+  await createIdea(formData);
+  navigate("/ideas");
+} catch (error) {
+  console.log(error);
+  setErrorMessage("Could not create idea");
+}
+};
 
 const inputStyle =
   "w-full bg-white/90 border border-white/40 rounded-xl px-3 py-2 text-sm text-zinc-900 placeholder-zinc-500 focus:outline-none focus:bg-white focus:border-white";

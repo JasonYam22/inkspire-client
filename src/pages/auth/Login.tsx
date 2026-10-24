@@ -1,11 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
-import { AuthContext } from "../../context/auth.context";
+import { useAuth } from "../../context/auth.context"
 import service from "../../services/index.services";
 
 function Login() {
   const { setIsLoggedIn, setLoggedUserId, setLoggedUserRole } =
-    useContext(AuthContext);
+    useAuth();
 
   const navigate = useNavigate();
 

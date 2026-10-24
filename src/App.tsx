@@ -3,7 +3,7 @@ import "./index.css";
 import background from "./assets/background.png";
 
 //pages
-import Home from "./pages/private/Home";
+import Home from "./pages/Home";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import VerifyEmail from "./pages/auth/VerifyEmail"
@@ -68,7 +68,11 @@ function App() {
               </Private>
             }
           />
-          <Route path="/ideas/:ideaId/edit" element={<EditIdea />} />
+          <Route path="/ideas/:ideaId/edit"   element={
+              <Private>
+                <EditIdea />
+              </Private>
+            }/>
           <Route
             path="/ideas/:ideaId"
             element={
