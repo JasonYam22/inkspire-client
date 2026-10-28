@@ -167,6 +167,14 @@ function IdeaDetails() {
           >
             Edit idea
           </Link>
+
+          <button
+            onClick={handleTogglePublic}
+            className="block w-full text-center py-2 text-xs font-semibold rounded-xl border border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white transition-all"
+          >
+            {tattooIdea.isPublic ? "Make private" : "Make public"}
+          </button>
+
           <button
             onClick={handleDelete}
             className="block w-full text-center py-2 text-xs font-semibold rounded-xl border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all"
@@ -234,13 +242,6 @@ function IdeaDetails() {
                       className="hover:text-zinc-900 font-medium"
                     >
                       Edit
-                    </button>
-
-                    <button
-                      onClick={handleTogglePublic}
-                      className="block w-full text-center py-2 text-xs font-semibold rounded-xl border border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white transition-all"
-                    >
-                      {tattooIdea.isPublic ? "Make private" : "Make public"}
                     </button>
 
                     <button
