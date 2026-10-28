@@ -167,25 +167,21 @@ function IdeaDetails() {
           >
             Edit idea
           </Link>
-
           <div className="mt-2 flex items-center justify-between bg-zinc-100 rounded-xl px-3 py-2">
             <span className="text-xs font-semibold text-zinc-700">
-              {tattooIdea.isPublic ? "Public" : "Private"}
+              Visibility
             </span>
             <button
               type="button"
-              role="switch"
-              aria-checked={tattooIdea.isPublic}
               onClick={handleTogglePublic}
-              className={`relative w-10 h-5 rounded-full transition-all ${
-                tattooIdea.isPublic ? "bg-emerald-600" : "bg-zinc-400"
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all shadow-sm ${
+                tattooIdea.isPublic
+                  ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                  : "bg-zinc-800 text-zinc-200 hover:bg-zinc-900"
               }`}
             >
-              <span
-                className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-all ${
-                  tattooIdea.isPublic ? "translate-x-5" : ""
-                }`}
-              />
+              <span>{tattooIdea.isPublic ? "🌍 Public" : "🔒 Private"}</span>
+              <span className="text-[10px] opacity-75">(Click to change)</span>
             </button>
           </div>
 
