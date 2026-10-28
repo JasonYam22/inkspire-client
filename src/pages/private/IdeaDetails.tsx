@@ -167,29 +167,37 @@ function IdeaDetails() {
           >
             Edit idea
           </Link>
-
-          <div className="mt-2 flex items-center justify-between bg-zinc-100 rounded-xl px-3.5 py-2.5">
-            <div className="flex flex-col">
-              <span className="text-xs font-semibold text-zinc-800">
-                Visibility
-              </span>
-              <span className="text-[10px] text-zinc-500">
-                {tattooIdea.isPublic
-                  ? "Visible to everyone"
-                  : "Only visible to you"}
-              </span>
-            </div>
+          <div className="relative grid w-full grid-cols-2 rounded-xl bg-white p-1 shadow-sm ring-1 ring-zinc-200">
+            <span
+              className={`absolute inset-y-1 left-1 w-[calc(50%-4px)] rounded-md shadow-sm transition-all duration-300 ease-out ${
+                tattooIdea.isPublic
+                  ? "translate-x-full bg-emerald-600"
+                  : "translate-x-0 bg-zinc-800"
+              }`}
+            />
 
             <button
               type="button"
-              onClick={handleTogglePublic}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all active:scale-95 shadow-sm ${
-                tattooIdea.isPublic
-                  ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                  : "bg-zinc-800 text-zinc-200 hover:bg-zinc-900"
+              onClick={() => tattooIdea.isPublic && handleTogglePublic()}
+              className={`relative z-10 py-1.5 text-xs font-semibold transition-colors duration-300 ${
+                !tattooIdea.isPublic
+                  ? "text-white"
+                  : "text-zinc-500 hover:text-zinc-800"
               }`}
             >
-              <span>{tattooIdea.isPublic ? "🌍 Public" : "🔒 Private"}</span>
+              🔒 Private
+            </button>
+
+            <button
+              type="button"
+              onClick={() => !tattooIdea.isPublic && handleTogglePublic()}
+              className={`relative z-10 py-1.5 text-xs font-semibold transition-colors duration-300 ${
+                tattooIdea.isPublic
+                  ? "text-white"
+                  : "text-zinc-500 hover:text-zinc-800"
+              }`}
+            >
+              🌍 Public
             </button>
           </div>
 
