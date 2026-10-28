@@ -6,14 +6,14 @@ export type TattooIdea = {
   imageUrl: string | null;
   notes: string | null;
   isFavorite: boolean;
-   isSaved?: boolean;
-   isPublic: boolean;
+  isSaved?: boolean;
+  isPublic: boolean;
   artist: string | null;
-  social: string | null
+  social: string | null;
   userId: string;
   createdAt: string;
   updatedAt: string;
-}; 
+};
 
 export type User = {
   id: string;
@@ -22,7 +22,6 @@ export type User = {
   imageUrl: string | null;
   role: string;
   createdAt: string;
-  
 };
 
 export type ExploreIdea = TattooIdea & {
@@ -31,7 +30,7 @@ export type ExploreIdea = TattooIdea & {
 
 export type Comment = {
   id: string;
-  text: string;
+  content: string;
   tattooIdeaId: string;
   userId: string;
   createdAt: string;
