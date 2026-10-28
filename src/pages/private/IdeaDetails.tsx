@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { getIdea, deleteIdea } from "../../services/ideas.services";
+import {
+  getIdea,
+  deleteIdea,
+  toggleIdeaPublic,
+} from "../../services/ideas.services";
 import type { TattooIdea } from "../../types";
 import {
   getComments,
@@ -59,7 +63,20 @@ function IdeaDetails() {
       });
   };
 
-  // --- PASTE THESE THREE HANDLERS RIGHT HERE ---
+  const handleTogglePublic = () => {
+    if (!ideaId) {
+      return;
+    }
+
+    toggleIdeaPublic(ideaId)
+      .then((updatedIdea) => {
+        setTattooIdea(updatedIdea);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const handleCreateComment = (e: React.FormEvent) => {
     e.preventDefault();
     if (!ideaId || !newContent.trim()) return;
@@ -97,6 +114,7 @@ function IdeaDetails() {
         console.log(error);
       });
   };
+
   return (
     <div className="min-h-screen p-6">
       <Link to="/ideas" className="text-zinc-600 hover:text-zinc-900 text-sm">
@@ -217,6 +235,14 @@ function IdeaDetails() {
                     >
                       Edit
                     </button>
+
+                    <button
+                      onClick={handleTogglePublic}
+                      className="block w-full text-center py-2 text-xs font-semibold rounded-xl border border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white transition-all"
+                    >
+                      {tattooIdea.isPublic ? "Make private" : "Make public"}
+                    </button>
+
                     <button
                       onClick={() => handleDeleteComment(comment.id)}
                       className="hover:text-red-600 font-medium"

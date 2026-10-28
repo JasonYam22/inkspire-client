@@ -14,7 +14,14 @@ export const updateIdea = (ideaId: string, formData: FormData) =>
   service.put<TattooIdea>(`/ideas/${ideaId}`, formData).then((res) => res.data);
 
 export const toggleFavorite = (ideaId: string, isFavorite: boolean) =>
-  service.put<TattooIdea>(`/ideas/${ideaId}`, { isFavorite }).then((res) => res.data);
+  service
+    .put<TattooIdea>(`/ideas/${ideaId}`, { isFavorite })
+    .then((res) => res.data);
+
+export const toggleIdeaPublic = (ideaId: string) =>
+  service
+    .patch<TattooIdea>(`/ideas/${ideaId}/toggle-public`)
+    .then((res) => res.data);
 
 export const deleteIdea = (ideaId: string) =>
   service.delete(`/ideas/${ideaId}`).then((res) => res.data);
@@ -29,4 +36,6 @@ export const getCollection = () =>
   service.get<ExploreIdea[]>("/ideas/collection").then((res) => res.data);
 
 export const toggleSaveIdea = (ideaId: string) =>
-  service.post<{ isSaved: boolean }>(`/ideas/explore/${ideaId}/save`).then((res) => res.data);
+  service
+    .post<{ isSaved: boolean }>(`/ideas/explore/${ideaId}/save`)
+    .then((res) => res.data);
