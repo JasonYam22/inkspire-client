@@ -14,7 +14,7 @@ export const createComment = (
   commentData: { content: string },
 ) => {
   return service
-    .post<Comment>(`/comments/${ideaId}`, commentData)
+    .post<Comment>(`/ideas/${ideaId}/comments`, commentData)
     .then((res) => res.data);
 };
 

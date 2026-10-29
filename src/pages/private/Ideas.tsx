@@ -37,7 +37,7 @@ function Ideas() {
           to="/ideas/new"
           className="inline-block bg-zinc-900 text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-zinc-700"
         >
-          + Add New Idea
+          + Add Idea
         </Link>
       </div>
 

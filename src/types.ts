@@ -26,6 +26,7 @@ export type User = {
 
 export type ExploreIdea = TattooIdea & {
   user: { username: string; role: string };
+  comments?: Comment[];
 };
 
 export type Comment = {
