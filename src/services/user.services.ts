@@ -7,5 +7,12 @@ export const getUser = () =>
 export const updateUser = (data: Partial<User>) =>
   service.put<User>("/users/user", data).then((res) => res.data);
 
+export const updateArtistBio = (bio: string) =>
+  service
+    .patch<Pick<User, "artistBio">>("/users/user/artist-bio", { bio })
+    .then((res) => res.data);
+
 export const uploadAvatar = (formData: FormData) =>
-  service.post<{imageUrl:string}>("/users/upload", formData).then((res) => res.data);
+  service
+    .post<{ imageUrl: string }>("/users/upload", formData)
+    .then((res) => res.data);

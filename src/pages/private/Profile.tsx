@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import service from "../../services/index.services";
+import { updateArtistBio } from "../../services/user.services";
 import { useAuth } from "../../context/auth.context";
 import type { User } from "../../types";
 
@@ -9,14 +10,19 @@ function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [bio, setBio] = useState("");
+  const [isSavingBio, setIsSavingBio] = useState(false);
+  const [bioMessage, setBioMessage] = useState("");
 
   useEffect(() => {
     service
-      .get("/users/user")
+      .get<User>("/users/user")
       .then((response) => {
         setUser(response.data);
         setUsername(response.data.username);
         setEmail(response.data.email);
+        setBio(response.data.artistBio ?? "");
+        setBioMessage("");
       })
       .catch((error) => {
         console.log(error);
@@ -44,6 +50,23 @@ function Profile() {
         setUser(response.data);
       })
       .catch((error) => console.log(error));
+  };
+
+  // Save the bio through the route that checks the artist role.
+  const handleSaveBio = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSavingBio(true);
+    setBioMessage("");
+
+    try {
+      const { artistBio } = await updateArtistBio(bio);
+      setBio(artistBio ?? "");
+      setBioMessage("Bio saved.");
+    } catch {
+      setBioMessage("Couldn’t save your bio. Please try again.");
+    } finally {
+      setIsSavingBio(false);
+    }
   };
 
   if (!user) return <p>Loading...</p>;
@@ -184,6 +207,43 @@ function Profile() {
             </button>
           </div>
         </div>
+
+        {user.role === "ARTIST" && (
+          <form
+            onSubmit={handleSaveBio}
+            className="mt-6 space-y-2 border-t border-white/10 pt-6"
+          >
+            <label
+              htmlFor="artist-bio"
+              className="block text-sm font-semibold text-white"
+            >
+              Artist bio
+            </label>
+            <textarea
+              id="artist-bio"
+              value={bio}
+              onChange={(event) => {
+                setBio(event.target.value);
+                setBioMessage("");
+              }}
+              maxLength={500}
+              rows={4}
+              disabled={isSavingBio}
+              className="w-full rounded-xl border border-white/10 bg-zinc-800/80 px-3.5 py-2.5 text-sm text-white focus:border-white/40"
+            />
+            <p className="text-xs text-zinc-400">{bio.length}/500 characters</p>
+            <button
+              type="submit"
+              disabled={isSavingBio}
+              className="w-full rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-zinc-950 hover:bg-zinc-200 disabled:opacity-50"
+            >
+              {isSavingBio ? "Saving…" : "Save bio"}
+            </button>
+            <p role="status" className="text-sm text-zinc-300">
+              {bioMessage}
+            </p>
+          </form>
+        )}
       </div>
     </div>
   );

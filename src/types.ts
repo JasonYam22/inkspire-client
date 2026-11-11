@@ -21,6 +21,7 @@ export type User = {
   username: string;
   imageUrl: string | null;
   role: string;
+  artistBio: string | null;
   createdAt: string;
 };
 

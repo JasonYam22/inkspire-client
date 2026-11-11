@@ -1,75 +1,36 @@
-# React + TypeScript + Vite
+# Inkspire (frontend)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An app for tracking tattoo ideas. You can keep ideas private or share them in Explore.
 
-Currently, two official plugins are available:
+## Info
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- [Live demo](https://inkspire-client.vercel.app/)
+- [Backend repo and setup](https://github.com/JasonYam22/inkspire-backend)
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Sign up with email or log in with Google.
+- Create, edit, and delete your tattoo ideas. You can add a photo and mark ideas as favorites.
+- Browse and comment on public ideas. Save ideas you like to your Collection.
+- Update your profile picture. Artists can also add a short bio.
 
-## Expanding the ESLint configuration
+## Tech stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+React, TypeScript, Vite, Tailwind CSS, React Router, and Axios.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting started
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Clone this repo and open the `inkspire-client` folder.
+2. Run `npm install`.
+3. Copy `.env.example` to `.env` and set `VITE_SERVER_URL=http://localhost:5005`.
+4. Start the backend using its [setup instructions](https://github.com/JasonYam22/inkspire-backend).
+5. Run `npm run dev` and open the local URL Vite prints.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## How it works
 
-```
+When you heart an idea in Explore, React sends a request to the Express API. The backend saves the idea to your Collection in PostgreSQL, and the page updates the heart.
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+## What I'd improve next
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+- Add a demo account with a few sample tattoo ideas.
+- Add tests for creating ideas and saving them to Collection.
