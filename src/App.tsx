@@ -1,12 +1,10 @@
 import { Routes, Route } from "react-router-dom";
 import "./index.css";
-import background from "./assets/background.png";
-
 //pages
 import Home from "./pages/Home";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
-import VerifyEmail from "./pages/auth/VerifyEmail"
+import VerifyEmail from "./pages/auth/VerifyEmail";
 import ResetPassword from "./pages/auth/ResetPassword";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 
@@ -23,15 +21,11 @@ import Error from "./pages/Error";
 //components
 import Navbar from "./components/Navbar";
 import Private from "./components/Private";
-import { AuthWrapper } from "./context/auth.context";
+import { AuthWrapper } from "./context/AuthWrapper";
 
 function App() {
   return (
-    <div className="relative min-h-screen">
-      <div
-        className="fixed inset-0 bg-cover bg-center blur-sm scale-110 -z-10 brightness-35"
-        style={{ backgroundImage: `url(${background})` }}
-      />
+    <div className="min-h-screen">
       <AuthWrapper>
         <Navbar />
         <Routes>
@@ -45,13 +39,13 @@ function App() {
             }
           />
           <Route
-  path="/collection"
-  element={
-    <Private>
-      <Collection />
-    </Private>
-  }
-/>
+            path="/collection"
+            element={
+              <Private>
+                <Collection />
+              </Private>
+            }
+          />
           <Route
             path="/explore/:ideaId"
             element={
@@ -68,11 +62,14 @@ function App() {
               </Private>
             }
           />
-          <Route path="/ideas/:ideaId/edit"   element={
+          <Route
+            path="/ideas/:ideaId/edit"
+            element={
               <Private>
                 <EditIdea />
               </Private>
-            }/>
+            }
+          />
           <Route
             path="/ideas/:ideaId"
             element={
@@ -98,9 +95,9 @@ function App() {
             }
           />
           <Route path="/login" element={<Login />} />
-             <Route path="/verify-email" element={<VerifyEmail />} />
-             <Route path="/reset-password" element={<ResetPassword />} />
-             <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="*" element={<Error />} />
         </Routes>

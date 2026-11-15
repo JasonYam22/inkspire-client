@@ -1,5 +1,5 @@
 import { useAuth } from "../context/auth.context";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 function Navbar() {
   const { isLoggedIn, logoutUser } = useAuth();
@@ -11,68 +11,58 @@ function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 flex items-center justify-between px-8 py-4 bg-zinc-950 border-b border-zinc-800/80 text-zinc-200 backdrop-blur-md bg-opacity-90">
-      {/* Logo */}
-      <Link
-        to="/"
-        className="text-xl font-black tracking-widest text-zinc-100 hover:text-white transition-colors uppercase"
+    <header className="pointer-events-none sticky top-0 z-30 px-3 pt-3 sm:px-6">
+      <nav
+        aria-label="Main navigation"
+        className="pointer-events-auto mx-auto grid max-w-6xl grid-cols-[1fr_auto] items-center gap-x-3 gap-y-2 rounded-2xl border border-white/15 bg-zinc-950/85 px-3 py-2 backdrop-blur-lg md:grid-cols-[1fr_auto_1fr] md:px-5"
       >
-        INK<span className="text-zinc-500">SPIRE</span>
-      </Link>
+        <Link
+          to="/"
+          className="justify-self-start text-xl font-bold tracking-tight"
+        >
+          Inkspire
+        </Link>
 
-      {/* Navigation Links */}
-      {isLoggedIn && (
-        <div className="flex items-center gap-6 text-sm font-medium">
-          <Link
-            to="/ideas"
-            className="text-zinc-400 hover:text-zinc-100 transition-colors"
-          >
-            Personal
-          </Link>
-          <Link
-            to="/explore"
-            className="text-zinc-400 hover:text-zinc-100 transition-colors"
-          >
-            Explore
-          </Link>
-          <Link
-            to="/collection"
-            className="text-zinc-400 hover:text-zinc-100 transition-colors"
-          >
-            Collection
-          </Link>
-          <Link
-            to="/users/user"
-            className="text-zinc-400 hover:text-zinc-100 transition-colors"
-          >
-            Profile
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="ml-2 px-3.5 py-1.5 text-xs font-semibold rounded-full bg-zinc-900 border border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 hover:border-zinc-500 transition-all"
-          >
-            Logout
-          </button>
-        </div>
-      )}
+        {isLoggedIn && (
+          <>
+            <div className="col-span-2 row-start-2 flex justify-evenly gap-1 border-t border-white/10 pt-1 md:col-span-1 md:col-start-2 md:row-start-1 md:gap-4 md:border-0 md:pt-0">
+              <NavLink to="/ideas" className="nav-link">
+                Personal
+              </NavLink>
+              <NavLink to="/explore" className="nav-link">
+                Explore
+              </NavLink>
+              <NavLink to="/collection" className="nav-link">
+                Collection
+              </NavLink>
+            </div>
+            <div className="col-start-2 row-start-1 flex items-center gap-2 justify-self-end md:col-start-3">
+              <NavLink to="/users/user" className="nav-link">
+                Profile
+              </NavLink>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="button-secondary"
+              >
+                Log out
+              </button>
+            </div>
+          </>
+        )}
 
-      {!isLoggedIn && (
-        <div className="flex items-center gap-6 text-sm font-medium">
-          <Link
-            to="/login"
-            className="text-zinc-400 hover:text-zinc-100 transition-colors"
-          >
-            Login
-          </Link>
-          <Link
-            to="/signup"
-            className="px-4 py-1.5 text-xs font-semibold rounded-full bg-zinc-100 text-zinc-950 hover:bg-zinc-300 transition-all"
-          >
-            Signup
-          </Link>
-        </div>
-      )}
-    </nav>
+        {!isLoggedIn && (
+          <div className="col-start-2 flex items-center gap-2 justify-self-end md:col-start-3">
+            <NavLink to="/login" className="nav-link">
+              Log in
+            </NavLink>
+            <Link to="/signup" className="button-primary">
+              Sign up
+            </Link>
+          </div>
+        )}
+      </nav>
+    </header>
   );
 }
 

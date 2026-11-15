@@ -1,68 +1,54 @@
-import { getIdeas } from "../../services/ideas.services";
 import { useEffect, useState } from "react";
-import type { TattooIdea } from "../../types";
-import IdeaCard from "../../components/IdeaCard";
 import { Link } from "react-router-dom";
+import { Plus } from "lucide-react";
+import type { TattooIdea } from "../../types";
+import { getIdeas } from "../../services/ideas.services";
+import IdeaCard from "../../components/IdeaCard";
+import Loading from "../../components/Loading";
 
 function Ideas() {
   const [ideas, setIdeas] = useState<TattooIdea[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     getIdeas()
-      .then((data) => {
-        setIdeas(data.filter((idea: TattooIdea) => !idea.isSaved));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      .then(setIdeas)
+      .catch(() => setLoadError(true))
+      .then(() => setIsLoading(false));
   }, []);
 
-  const favorites = ideas.filter((idea) => idea.isFavorite);
-  const others = ideas.filter((idea) => !idea.isFavorite);
-
   return (
-    <div>
-      <div>
-        <h1 className="text-3xl font-bold text-zinc-900 mt-4 mb-1">My Ideas</h1>
-        <p className="text-zinc-500 mb-2">
-          Every tattoo idea you've saved, ready whenever you're ready to book.
-        </p>
-        <p className="text-zinc-400 mb-6">
-          {ideas.length} saved · {ideas.filter((i) => i.isFavorite).length}{" "}
-          favorited
-        </p>
-      </div>
-      <div className="mb-6">
-        <Link
-          to="/ideas/new"
-          className="inline-block bg-zinc-900 text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-zinc-700"
-        >
-          + Add Idea
+    <main className="page">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="page-title">My tattoo ideas</h1>
+          {!isLoading && !loadError && (
+            <p className="muted mt-1 tabular-nums">
+              {ideas.length} {ideas.length === 1 ? "idea" : "ideas"}
+            </p>
+          )}
+        </div>
+        <Link to="/ideas/new" className="button-primary">
+          <Plus aria-hidden="true" className="size-4" />
+          Add an idea
         </Link>
       </div>
-
-      {favorites.length > 0 && (
-        <>
-          <h2 className="text-xl font-bold text-white px-6">Favorites</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-            {favorites.map((idea) => (
-              <IdeaCard key={idea.id} tattooIdea={idea} />
-            ))}
-          </div>
-        </>
+      {isLoading && <Loading label="Loading your ideas…" />}
+      {loadError && (
+        <p role="alert" className="text-red-300">
+          Couldn’t load your ideas. Refresh to try again.
+        </p>
       )}
-
-      {others.length > 0 && (
-        <>
-          <h2 className="text-xl font-bold text-white px-6">Other ideas</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 p-6">
-            {others.map((idea) => (
-              <IdeaCard key={idea.id} tattooIdea={idea} />
-            ))}
-          </div>
-        </>
+      {!isLoading && !loadError && ideas.length === 0 && (
+        <p className="muted">No tattoo ideas yet.</p>
       )}
-    </div>
+      <div className="idea-grid">
+        {ideas.map((idea) => (
+          <IdeaCard key={idea.id} tattooIdea={idea} />
+        ))}
+      </div>
+    </main>
   );
 }
 

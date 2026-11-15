@@ -1,111 +1,188 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { HeartIcon } from "lucide-react";
+import { Heart } from "lucide-react";
+import IdeaCard from "../../components/IdeaCard";
+import Loading from "../../components/Loading";
 import type { ExploreIdea } from "../../types";
 import { getExploreIdeas, toggleSaveIdea } from "../../services/ideas.services";
 
 function Explore() {
   const [ideas, setIdeas] = useState<ExploreIdea[]>([]);
+  const [search, setSearch] = useState("");
+  const [genre, setGenre] = useState("");
+  const [spot, setSpot] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const [savingIds, setSavingIds] = useState<string[]>([]);
 
   useEffect(() => {
-    getExploreIdeas()
-      .then((data) => setIdeas(data))
-      .catch((error) => console.log(error));
+    const loadIdeas = async () => {
+      try {
+        const data = await getExploreIdeas();
+        setIdeas(data);
+      } catch {
+        setLoadError(true);
+      }
+
+      setIsLoading(false);
+    };
+
+    loadIdeas();
   }, []);
 
-  const handleToggleSave = async (ideaId: string) => {
-    try {
-      const res = await toggleSaveIdea(ideaId);
+  const genres = [
+    ...new Set(
+      ideas
+        .map((idea) => idea.genre)
+        .filter((value): value is string => Boolean(value)),
+    ),
+  ].sort();
+  const spots = [
+    ...new Set(
+      ideas
+        .map((idea) => idea.spot)
+        .filter((value): value is string => Boolean(value)),
+    ),
+  ].sort();
+  const query = search.trim().toLowerCase();
 
-      setIdeas((prevIdeas) =>
-        prevIdeas.map((idea) =>
-          idea.id === ideaId ? { ...idea, isSaved: res.isSaved } : idea
-        )
+  const filteredIdeas = ideas.filter((idea) => {
+    const matchesSearch = [
+      idea.title,
+      idea.genre,
+      idea.spot,
+      idea.user.username,
+    ].some((value) => value?.toLowerCase().includes(query));
+
+    return (
+      matchesSearch &&
+      (!genre || idea.genre === genre) &&
+      (!spot || idea.spot === spot)
+    );
+  });
+
+  const setSaved = (ideaId: string, isSaved: boolean) => {
+    setIdeas((currentIdeas) =>
+      currentIdeas.map((idea) =>
+        idea.id === ideaId ? { ...idea, isSaved } : idea,
+      ),
+    );
+  };
+
+  const handleToggleSave = async (idea: ExploreIdea) => {
+    const wasSaved = idea.isSaved === true;
+    setSaveError("");
+    setSavingIds((ids) => [...ids, idea.id]);
+
+    // Update the heart right away, then check what the server saved.
+    setSaved(idea.id, !wasSaved);
+
+    try {
+      const { isSaved } = await toggleSaveIdea(idea.id);
+      setSaved(idea.id, isSaved);
+    } catch {
+      setSaved(idea.id, wasSaved);
+      setSaveError(
+        `Couldn’t update “${idea.title}” in your Collection. Try again.`,
       );
-    } catch (error) {
-      console.error("Error saving idea:", error);
     }
+
+    setSavingIds((ids) => ids.filter((id) => id !== idea.id));
   };
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-white mt-4 mb-1 px-6">Explore</h1>
-      <p className="text-white/70 mb-6 px-6">
-        Tattoo ideas from the Inkspire community.
-      </p>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 max-w-5xl mx-auto">
-        {ideas.map((idea) => (
-          <div
-            key={idea.id}
-            className="group flex flex-col w-full max-w-xs mx-auto bg-zinc-800/70 backdrop-blur-md border border-zinc-700 rounded-3xl p-3 shadow-lg hover:-translate-y-1 hover:border-zinc-500 hover:shadow-2xl transition-all duration-300"
+    <main className="page">
+      <h1 className="page-title mb-6">Explore tattoos</h1>
+      <div className="grid items-start gap-6 lg:grid-cols-[13rem_minmax(0,1fr)]">
+        <div
+          role="group"
+          aria-label="Search and filters"
+          className="grid gap-3 border-l-2 border-violet-300 pl-4 sm:grid-cols-[2fr_1fr_1fr] lg:sticky lg:top-24 lg:grid-cols-1"
+        >
+          <input
+            type="search"
+            aria-label="Search tattoo ideas"
+            placeholder="Try snake or fine line"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            className="field w-full"
+          />
+          <select
+            aria-label="Filter by style"
+            value={genre}
+            onChange={(event) => setGenre(event.target.value)}
+            className="field w-full"
           >
-            {/* Card Image Header */}
-            <div className="relative h-52 rounded-2xl overflow-hidden bg-zinc-700">
-              {idea.imageUrl ? (
-                <img
-                  src={idea.imageUrl}
-                  alt={idea.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-zinc-500 text-xs font-medium uppercase tracking-wider">
-                  No Image
-                </div>
-              )}
+            <option value="">All styles</option>
+            {genres.map((option) => (
+              <option key={option}>{option}</option>
+            ))}
+          </select>
+          <select
+            aria-label="Filter by placement"
+            value={spot}
+            onChange={(event) => setSpot(event.target.value)}
+            className="field w-full"
+          >
+            <option value="">All placements</option>
+            {spots.map((option) => (
+              <option key={option}>{option}</option>
+            ))}
+          </select>
+        </div>
 
-              {/* Heart Button Positioned Top-Right */}
-              <button
-                onClick={() => handleToggleSave(idea.id)}
-                className="absolute top-3 right-3 z-10 p-2 rounded-full bg-zinc-900/60 backdrop-blur-md hover:bg-zinc-900/90 transition-all cursor-pointer"
-              >
-                <HeartIcon
-                  className={`w-5 h-5 transition-colors ${
-                    idea.isSaved
-                      ? "text-red-500 fill-red-500"
-                      : "text-zinc-300 fill-none"
-                  }`}
-                />
-              </button>
-            </div>
+        <div className="min-w-0">
+          {isLoading && <Loading label="Loading tattoo ideas…" />}
+          {loadError && (
+            <p role="alert" className="text-red-300">
+              Couldn’t load ideas. Refresh to try again.
+            </p>
+          )}
+          {saveError && (
+            <p role="alert" className="mb-4 text-red-300">
+              {saveError}
+            </p>
+          )}
+          {!isLoading && !loadError && filteredIdeas.length === 0 && (
+            <p role="status" className="muted">
+              {ideas.length === 0
+                ? "No public tattoos yet."
+                : "No matches. Try a different search or filter."}
+            </p>
+          )}
 
-            {/* Card Content */}
-            <div className="flex flex-col gap-2 flex-1 px-2 pt-4 pb-2">
-              <h2 className="text-base font-bold text-zinc-100 truncate">
-                {idea.title}
-              </h2>
+          {!isLoading && !loadError && filteredIdeas.length > 0 && (
+            <p role="status" className="muted mb-3 text-sm tabular-nums">
+              {filteredIdeas.length}{" "}
+              {filteredIdeas.length === 1 ? "result" : "results"}
+            </p>
+          )}
 
-              <div className="text-xs text-zinc-400 space-y-0.5">
-                {idea.genre && (
-                  <p className="truncate">
-                    Genre: <span className="text-zinc-200 font-medium">{idea.genre}</span>
-                  </p>
-                )}
-                {idea.spot && (
-                  <p className="truncate">
-                    Spot: <span className="text-zinc-200 font-medium">{idea.spot}</span>
-                  </p>
-                )}
-              </div>
-
-              <p className="mt-auto text-xs text-zinc-500">
-                by{" "}
-                <span className="text-zinc-300 font-medium">
-                  {idea.user.username} ({idea.user.role})
-                </span>
-              </p>
-
-              <Link
+          <div className="idea-grid">
+            {filteredIdeas.map((idea) => (
+              <IdeaCard
+                key={idea.id}
+                tattooIdea={idea}
                 to={`/explore/${idea.id}`}
-                className="block w-full text-center py-2 text-xs font-semibold rounded-xl bg-zinc-200 text-zinc-900 hover:bg-white transition-all"
-              >
-                View details
-              </Link>
-            </div>
+                author={idea.user.username}
+                action={
+                  <button
+                    type="button"
+                    onClick={() => handleToggleSave(idea)}
+                    disabled={savingIds.includes(idea.id)}
+                    aria-label={`Save ${idea.title} to Collection`}
+                    aria-pressed={idea.isSaved === true}
+                    className="heart-button motion-safe:transition-transform motion-safe:active:scale-90"
+                  >
+                    <Heart aria-hidden="true" className="size-5" />
+                  </button>
+                }
+              />
+            ))}
           </div>
-        ))}
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
 

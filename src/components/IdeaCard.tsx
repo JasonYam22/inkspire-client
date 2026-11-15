@@ -1,99 +1,45 @@
-import { useState } from "react";
+import type { ReactNode } from "react";
+import { Link } from "react-router-dom";
 import type { TattooIdea } from "../types";
-import { Heart } from "lucide-react"
-import { Link } from "react-router-dom"
-import { deleteIdea, toggleFavorite } from "../services/ideas.services";
 
 type Props = {
   tattooIdea: TattooIdea;
-  onRemove?: (ideaId: string) => void;
+  to?: string;
+  author?: string;
+  action?: ReactNode;
 };
 
-function IdeaCard({ tattooIdea, onRemove }: Props) {
+function IdeaCard({ tattooIdea, to, author, action }: Props) {
+  const details = [tattooIdea.genre, tattooIdea.spot]
+    .filter(Boolean)
+    .join(" · ");
 
-const [isFavorite, setIsFavorite] = useState(tattooIdea.isFavorite)
-
-const handleHeartClick = () => {
-  if (onRemove) {
-    deleteIdea(tattooIdea.id)
-      .then(() => {
-        onRemove(tattooIdea.id)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-  } else {
-    toggleFavorite(tattooIdea.id, !isFavorite)
-      .then(() => {
-        setIsFavorite(!isFavorite)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-  }
-}
-
-return (
-  <div className="group flex flex-col w-full max-w-xs mx-auto bg-zinc-800/70 backdrop-blur-md border border-zinc-700 rounded-3xl p-3 shadow-lg hover:-translate-y-1 hover:border-zinc-500 hover:shadow-2xl transition-all duration-300">
-    {/* Image */}
-    <div className="relative h-52 rounded-2xl overflow-hidden bg-zinc-700">
-      {tattooIdea.imageUrl ? (
-        <img
-          src={tattooIdea.imageUrl}
-          alt={tattooIdea.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-      ) : (
-        <div className="w-full h-full flex items-center justify-center text-zinc-500 text-xs font-medium uppercase tracking-wider">
-          No Image
+  return (
+    <article className="panel relative min-w-0 transition-colors hover:border-violet-300">
+      <Link to={to || `/ideas/${tattooIdea.id}`} className="block rounded-lg">
+        <div className="idea-image relative grid aspect-[4/3] place-items-center">
+          {tattooIdea.imageUrl ? (
+            <img
+              src={tattooIdea.imageUrl}
+              alt=""
+              loading="lazy"
+              className="absolute inset-0 size-full object-cover"
+            />
+          ) : (
+            <p className="muted text-sm">No photo</p>
+          )}
         </div>
-      )}
-
-      <button
-        onClick={handleHeartClick}
-        className="absolute top-2.5 right-2.5 p-2 rounded-full bg-white/90 backdrop-blur-md shadow-md hover:scale-110 active:scale-95 transition-all"
-        aria-label={onRemove ? "Remove from collection" : "Favorite tattoo idea"}
-      >
-        <Heart
-          className={`w-4 h-4 transition-colors ${
-            onRemove || isFavorite
-              ? "text-red-500 fill-red-500"
-              : "text-zinc-600 hover:text-red-500"
-          }`}
-        />
-      </button>
-    </div>
-
-    {/* Content */}
-    <div className="flex flex-col gap-2 flex-1 px-2 pt-4 pb-2">
-      <h2 className="text-base font-bold text-zinc-100 truncate">
-        {tattooIdea.title}
-      </h2>
-
-      <div className="text-xs text-zinc-400 space-y-0.5 mb-3">
-        {tattooIdea.genre && (
-          <p className="truncate">Genre: <span className="text-zinc-200 font-medium">{tattooIdea.genre}</span></p>
-        )}
-        {tattooIdea.spot && (
-          <p className="truncate">Spot: <span className="text-zinc-200 font-medium">{tattooIdea.spot}</span></p>
-        )}
-        {tattooIdea.artist && (
-          <p className="truncate">Artist: <span className="text-zinc-200 font-medium">{tattooIdea.artist}</span></p>
-        )}
-        {tattooIdea.social && (
-          <p className="truncate">Social: <span className="text-zinc-200">{tattooIdea.social}</span></p>
-        )}
-      </div>
-
-      <Link
-        to={`/ideas/${tattooIdea.id}`}
-        className="mt-auto block w-full text-center py-2 text-xs font-semibold rounded-xl bg-zinc-200 text-zinc-900 hover:bg-white transition-all"
-      >
-        View details
+        <div className="space-y-1 px-1 pt-3 pb-1">
+          <h2 className="break-words text-lg font-semibold">
+            {tattooIdea.title}
+          </h2>
+          {details && <p className="muted break-words text-sm">{details}</p>}
+          {author && <p className="muted break-words text-sm">By {author}</p>}
+        </div>
       </Link>
-    </div>
-  </div>
-);
+      {action && <div className="absolute inset-x-3 top-3">{action}</div>}
+    </article>
+  );
 }
 
 export default IdeaCard;

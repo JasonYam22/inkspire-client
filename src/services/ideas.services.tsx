@@ -13,11 +13,6 @@ export const createIdea = (formData: FormData) =>
 export const updateIdea = (ideaId: string, formData: FormData) =>
   service.put<TattooIdea>(`/ideas/${ideaId}`, formData).then((res) => res.data);
 
-export const toggleFavorite = (ideaId: string, isFavorite: boolean) =>
-  service
-    .put<TattooIdea>(`/ideas/${ideaId}`, { isFavorite })
-    .then((res) => res.data);
-
 export const toggleIdeaPublic = (ideaId: string) =>
   service
     .patch<TattooIdea>(`/ideas/${ideaId}/toggle-public`)

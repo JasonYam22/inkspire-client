@@ -1,3 +1,4 @@
+import Loading from "../../components/Loading";
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
@@ -13,12 +14,17 @@ import {
   deleteComment,
 } from "../../services/comments.services";
 import type { Comment } from "../../types";
+import { useAuth } from "../../context/auth.context";
 
 function IdeaDetails() {
   const { ideaId } = useParams();
+  const { loggedUserId } = useAuth();
   const [tattooIdea, setTattooIdea] = useState<TattooIdea | null>(null);
+  const [failedIdeaId, setFailedIdeaId] = useState<string | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newContent, setNewContent] = useState("");
+  const [isPosting, setIsPosting] = useState(false);
+  const [commentError, setCommentError] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editComment, setEditComment] = useState("");
 
@@ -32,8 +38,8 @@ function IdeaDetails() {
       .then((data) => {
         setTattooIdea(data);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        setFailedIdeaId(ideaId);
       });
 
     getComments(ideaId)
@@ -45,7 +51,21 @@ function IdeaDetails() {
       });
   }, [ideaId]);
 
-  if (!tattooIdea) return <p className="text-amber-50">Loading...</p>;
+  if (failedIdeaId === ideaId && tattooIdea?.id !== ideaId) {
+    return (
+      <p role="alert" className="p-6 text-white">
+        Couldn’t load this idea.
+      </p>
+    );
+  }
+
+  if (!tattooIdea || tattooIdea.id !== ideaId) {
+    return (
+      <div className="page">
+        <Loading label="Loading tattoo idea…" />
+      </div>
+    );
+  }
 
   const handleDelete = () => {
     if (!window.confirm("Delete this idea?")) return;
@@ -79,22 +99,26 @@ function IdeaDetails() {
 
   const handleCreateComment = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!ideaId || !newContent.trim()) return;
+    if (isPosting || !ideaId || !newContent.trim()) return;
+
+    setIsPosting(true);
+    setCommentError("");
 
     createComment(ideaId, { content: newContent })
       .then((createdComment) => {
-        setComments([...comments, createdComment]);
+        setComments((currentComments) => [...currentComments, createdComment]);
         setNewContent("");
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch(() => setCommentError("Couldn’t post your comment. Try again."))
+      .then(() => setIsPosting(false));
   };
 
   const handleDeleteComment = (commentId: string) => {
     deleteComment(commentId)
       .then(() => {
-        setComments(comments.filter((c) => c.id !== commentId));
+        setComments((currentComments) =>
+          currentComments.filter((comment) => comment.id !== commentId),
+        );
       })
       .catch((error) => {
         console.log(error);
@@ -104,8 +128,10 @@ function IdeaDetails() {
   const handleUpdateComment = (commentId: string) => {
     updateComment(commentId, { content: editComment })
       .then((updatedComment) => {
-        setComments(
-          comments.map((c) => (c.id === commentId ? updatedComment : c)),
+        setComments((currentComments) =>
+          currentComments.map((comment) =>
+            comment.id === commentId ? updatedComment : comment,
+          ),
         );
         setEditingId(null);
         setEditComment("");
@@ -116,124 +142,133 @@ function IdeaDetails() {
   };
 
   return (
-    <div className="min-h-screen p-6">
-      <Link to="/ideas" className="text-zinc-600 hover:text-zinc-900 text-sm">
+    <div className="page">
+      <Link to="/ideas" className="muted text-sm hover:underline">
         ← Back to Ideas
       </Link>
 
-      <div className="mt-4 bg-zinc-300 rounded-2xl overflow-hidden shadow-md w-80 p-3 mx-auto">
-        <div className="relative rounded-xl overflow-hidden">
+      <div className="panel mx-auto mt-4 max-w-3xl">
+        <div className="idea-image">
           {tattooIdea.imageUrl && (
             <img
               src={tattooIdea.imageUrl}
               alt={tattooIdea.title}
-              className="w-full h-56 object-cover"
+              className="block max-h-[65vh] w-full object-contain"
             />
           )}
         </div>
 
         <div className="p-2 pt-4 flex flex-col gap-2">
-          <h1 className="text-xl font-bold text-zinc-900">
-            {tattooIdea.title}
-          </h1>
+          <h1 className="page-title">{tattooIdea.title}</h1>
 
-          <div className="flex gap-2 flex-wrap">
-            {tattooIdea.genre && (
-              <span className="text-xs font-semibold uppercase tracking-wide bg-zinc-100 text-zinc-600 px-2 py-1 rounded">
-                {tattooIdea.genre}
-              </span>
-            )}
-            {tattooIdea.spot && (
-              <span className="text-xs font-semibold uppercase tracking-wide bg-zinc-100 text-zinc-600 px-2 py-1 rounded">
-                {tattooIdea.spot}
-              </span>
-            )}
-          </div>
+          {(tattooIdea.genre || tattooIdea.spot) && (
+            <p className="muted break-words text-sm">
+              {[tattooIdea.genre, tattooIdea.spot].filter(Boolean).join(" · ")}
+            </p>
+          )}
 
           {tattooIdea.artist && (
-            <p className="text-zinc-600 text-sm">Artist: {tattooIdea.artist}</p>
+            <p className="muted break-words text-sm">
+              Artist: {tattooIdea.artist}
+            </p>
           )}
           {tattooIdea.social && (
-            <p className="text-zinc-600 text-sm">Social: {tattooIdea.social}</p>
+            <p className="muted break-words text-sm">
+              Social: {tattooIdea.social}
+            </p>
           )}
           {tattooIdea.notes && (
-            <p className="text-zinc-500 text-sm mt-1 border-t border-zinc-200 pt-2">
+            <p className="muted mt-1 break-words border-t border-zinc-700 pt-2 text-sm">
               {tattooIdea.notes}
             </p>
           )}
-          <Link
-            to={`/ideas/${tattooIdea.id}/edit`}
-            className="mt-2 block w-full text-center py-2 text-xs font-semibold rounded-xl bg-zinc-900 text-white hover:bg-zinc-700 transition-all"
-          >
-            Edit idea
-          </Link>
-          <div className="relative grid w-full grid-cols-2 rounded-xl bg-white p-1 shadow-sm ring-1 ring-zinc-200">
-            <span
-              className={`absolute inset-y-1 left-1 w-[calc(50%-4px)] rounded-md shadow-sm transition-all duration-300 ease-out ${
-                tattooIdea.isPublic
-                  ? "translate-x-full bg-emerald-600"
-                  : "translate-x-0 bg-zinc-800"
-              }`}
-            />
+          {tattooIdea.userId === loggedUserId && (
+            <>
+              <Link
+                to={`/ideas/${tattooIdea.id}/edit`}
+                className="button-primary self-start"
+              >
+                Edit idea
+              </Link>
+              <div className="relative grid w-full grid-cols-2 rounded-lg border border-zinc-700 bg-zinc-900 p-1">
+                <span
+                  className={`absolute inset-y-1 left-1 w-[calc(50%-4px)] rounded motion-safe:transition-transform ${
+                    tattooIdea.isPublic
+                      ? "translate-x-full bg-violet-300"
+                      : "translate-x-0 bg-violet-300"
+                  }`}
+                />
 
-            <button
-              type="button"
-              onClick={() => tattooIdea.isPublic && handleTogglePublic()}
-              className={`relative z-10 py-1.5 text-xs font-semibold transition-colors duration-300 ${
-                !tattooIdea.isPublic
-                  ? "text-white"
-                  : "text-zinc-500 hover:text-zinc-800"
-              }`}
-            >
-              🔒 Private
-            </button>
+                <button
+                  type="button"
+                  aria-pressed={!tattooIdea.isPublic}
+                  onClick={() => tattooIdea.isPublic && handleTogglePublic()}
+                  className={`relative z-10 py-1.5 text-xs font-semibold transition-colors duration-300 ${
+                    !tattooIdea.isPublic
+                      ? "text-zinc-950"
+                      : "text-zinc-300 hover:text-white"
+                  }`}
+                >
+                  Private
+                </button>
 
-            <button
-              type="button"
-              onClick={() => !tattooIdea.isPublic && handleTogglePublic()}
-              className={`relative z-10 py-1.5 text-xs font-semibold transition-colors duration-300 ${
-                tattooIdea.isPublic
-                  ? "text-white"
-                  : "text-zinc-500 hover:text-zinc-800"
-              }`}
-            >
-              🌍 Public
-            </button>
-          </div>
+                <button
+                  type="button"
+                  aria-pressed={tattooIdea.isPublic}
+                  onClick={() => !tattooIdea.isPublic && handleTogglePublic()}
+                  className={`relative z-10 py-1.5 text-xs font-semibold transition-colors duration-300 ${
+                    tattooIdea.isPublic
+                      ? "text-zinc-950"
+                      : "text-zinc-300 hover:text-white"
+                  }`}
+                >
+                  Public
+                </button>
+              </div>
 
-          <button
-            onClick={handleDelete}
-            className="block w-full text-center py-2 text-xs font-semibold rounded-xl border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all"
-          >
-            Delete idea
-          </button>
+              <button
+                onClick={handleDelete}
+                className="block w-full text-center py-2 text-xs font-semibold rounded-xl border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+              >
+                Delete idea
+              </button>
+            </>
+          )}
         </div>
       </div>
 
-      <div className="mt-8 max-w-md mx-auto bg-white p-6 rounded-2xl shadow-md">
-        <h3 className="text-lg font-bold text-zinc-900 mb-4">Comments</h3>
+      <div className="panel mx-auto mt-6 max-w-3xl">
+        <h3 className="mb-4 text-lg font-semibold">Comments</h3>
 
         <form onSubmit={handleCreateComment} className="mb-6 flex gap-2">
           <input
             type="text"
             value={newContent}
             onChange={(e) => setNewContent(e.target.value)}
-            placeholder="Add a comment..."
-            className="border border-zinc-300 p-2 rounded-xl flex-1 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
+            aria-label="Comment"
+            placeholder="Add a comment…"
+            disabled={isPosting}
+            className="field min-w-0 flex-1"
           />
           <button
             type="submit"
-            className="bg-zinc-900 text-white px-4 py-2 text-xs font-semibold rounded-xl hover:bg-zinc-700 transition-all"
+            className="button-primary"
+            disabled={isPosting || !newContent.trim()}
           >
-            Post
+            {isPosting ? "Posting…" : "Post"}
           </button>
         </form>
 
+        {commentError && (
+          <p role="alert" className="mb-4 text-sm text-red-300">
+            {commentError}
+          </p>
+        )}
         <div className="space-y-4">
           {comments.map((comment) => (
             <div
               key={comment.id}
-              className="border border-zinc-200 p-3 rounded-xl"
+              className="rounded-lg border border-zinc-700 p-3"
             >
               {editingId === comment.id ? (
                 <div className="flex gap-2">
@@ -241,42 +276,44 @@ function IdeaDetails() {
                     type="text"
                     value={editComment}
                     onChange={(e) => setEditComment(e.target.value)}
-                    className="border border-zinc-300 p-1 rounded-lg flex-1 text-sm"
+                    className="field min-w-0 flex-1"
                   />
                   <button
                     onClick={() => handleUpdateComment(comment.id)}
-                    className="bg-emerald-600 text-white px-3 py-1 text-xs font-semibold rounded-lg"
+                    className="button-primary"
                   >
                     Save
                   </button>
                   <button
                     onClick={() => setEditingId(null)}
-                    className="bg-zinc-400 text-white px-3 py-1 text-xs font-semibold rounded-lg"
+                    className="button-secondary"
                   >
                     Cancel
                   </button>
                 </div>
               ) : (
                 <div>
-                  <p className="text-zinc-800 text-sm">{comment.content}</p>
-                  <div className="flex gap-4 mt-2 text-xs text-zinc-500">
-                    <button
-                      onClick={() => {
-                        setEditingId(comment.id);
-                        setEditComment(comment.content);
-                      }}
-                      className="hover:text-zinc-900 font-medium"
-                    >
-                      Edit
-                    </button>
+                  <p className="break-words text-sm">{comment.content}</p>
+                  {comment.userId === loggedUserId && (
+                    <div className="flex gap-4 mt-2 muted text-xs">
+                      <button
+                        onClick={() => {
+                          setEditingId(comment.id);
+                          setEditComment(comment.content);
+                        }}
+                        className="font-medium hover:underline"
+                      >
+                        Edit
+                      </button>
 
-                    <button
-                      onClick={() => handleDeleteComment(comment.id)}
-                      className="hover:text-red-600 font-medium"
-                    >
-                      Delete
-                    </button>
-                  </div>
+                      <button
+                        onClick={() => handleDeleteComment(comment.id)}
+                        className="hover:text-red-600 font-medium"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

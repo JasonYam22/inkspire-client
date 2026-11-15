@@ -10,7 +10,7 @@ An app for tracking tattoo ideas. You can keep ideas private or share them in Ex
 ## Features
 
 - Sign up with email or log in with Google.
-- Create, edit, and delete your tattoo ideas. You can add a photo and mark ideas as favorites.
+- Create, edit, and delete your tattoo ideas. You can add a photo.
 - Browse and comment on public ideas. Save ideas you like to your Collection.
 - Update your profile picture. Artists can also add a short bio.
 
@@ -34,3 +34,12 @@ When you heart an idea in Explore, React sends a request to the Express API. The
 
 - Add a demo account with a few sample tattoo ideas.
 - Add tests for creating ideas and saving them to Collection.
+
+## Try the demo
+
+Sign in with email and password on the [demo login page](https://inkspire-client.vercel.app/login).
+
+- Email: `demo@inkspire.example`
+- Password: `InkspireDemo1-iJySp56o93Tt3mim`
+
+Open **Personal** to see a few sample tattoo ideas.

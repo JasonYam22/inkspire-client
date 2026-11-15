@@ -1,15 +1,26 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getIdea, updateIdea } from "../../services/ideas.services";
 
 const genres = [
-  "Traditional", "Neo-Traditional", "Japanese", "Blackwork", "Realism",
-  "Watercolor", "Minimalist", "Fine Line", "Tribal", "Geometric", "Lettering", "Other",
+  "Traditional",
+  "Neo-Traditional",
+  "Japanese",
+  "Blackwork",
+  "Realism",
+  "Watercolor",
+  "Minimalist",
+  "Fine Line",
+  "Tribal",
+  "Geometric",
+  "Lettering",
+  "Other",
 ];
 
 function EditIdea() {
   const { ideaId } = useParams();
   const navigate = useNavigate();
+  const { state } = useLocation();
 
   const [title, setTitle] = useState("");
   const [genre, setGenre] = useState("");
@@ -22,10 +33,9 @@ function EditIdea() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-
-if (!ideaId) {
-  return
-}
+    if (!ideaId) {
+      return;
+    }
 
     getIdea(ideaId)
       .then((data) => {
@@ -63,11 +73,12 @@ if (!ideaId) {
     if (image) {
       formData.append("image", image);
     }
-if (!ideaId) return;
+    if (!ideaId) return;
 
-updateIdea(ideaId, formData)
+    updateIdea(ideaId, formData)
       .then(() => {
-        navigate(`/ideas/${ideaId}`);
+        const section = state?.fromExplore ? "explore" : "ideas";
+        navigate(`/${section}/${ideaId}`);
       })
       .catch((error) => {
         console.log(error);
@@ -171,10 +182,7 @@ updateIdea(ideaId, formData)
           <p className="text-sm text-red-400 mt-3">{errorMessage}</p>
         )}
 
-        <button
-          type="submit"
-          className="mt-4 w-full py-2 text-sm font-semibold rounded-xl bg-white text-zinc-900 hover:bg-zinc-200 transition-all"
-        >
+        <button type="submit" className="button-primary w-full">
           Save Changes
         </button>
       </form>

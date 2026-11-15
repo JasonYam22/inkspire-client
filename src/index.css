@@ -1,6 +1,141 @@
 @import "tailwindcss";
 
-html, body {
-  height: 100%;
+:root {
+  color-scheme: dark;
+  --canvas: #101012;
+  --surface: #1a1a1e;
+  --line: #3f3f46;
+  --muted: #c4c4cc;
+  --accent: #c6b3ff;
+  --radius: 20px;
+  --card-padding: 12px;
+}
+
+body {
   margin: 0;
+  background:
+    radial-gradient(ellipse at 8% 20%, rgb(190 49 103 / 15%), transparent 42%),
+    radial-gradient(ellipse at 96% 22%, rgb(64 100 242 / 21%), transparent 45%),
+    radial-gradient(
+      ellipse at 54% 100%,
+      rgb(26 150 107 / 13%),
+      transparent 48%
+    ),
+    var(--canvas);
+  background-attachment: fixed;
+  color: #f4f4f5;
+  font-family: "Geist", system-ui, sans-serif;
+}
+
+h1,
+h2 {
+  text-wrap: balance;
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+button:not(:disabled) {
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.65;
+}
+
+@layer components {
+  .page {
+    @apply mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12;
+  }
+  .page-title {
+    @apply break-words text-3xl font-bold tracking-tight sm:text-4xl;
+  }
+  .muted {
+    color: var(--muted);
+  }
+
+  .nav-link {
+    @apply rounded-lg px-2 py-2.5 text-sm font-medium transition-colors sm:px-3;
+    color: var(--muted);
+  }
+
+  .nav-link:hover {
+    @apply bg-white/10 text-white;
+  }
+
+  .nav-link[aria-current="page"] {
+    @apply bg-white/10;
+    color: var(--accent);
+  }
+
+  .idea-grid {
+    @apply grid gap-5 sm:grid-cols-2 lg:grid-cols-3;
+  }
+
+  .home-cover {
+    @apply grid items-center gap-8 py-4 md:grid-cols-[1fr_1.15fr] md:gap-12;
+  }
+
+  .cover-title {
+    @apply max-w-2xl text-5xl font-black leading-[0.95] tracking-tight sm:text-7xl;
+  }
+
+  .cover-photo {
+    @apply aspect-[4/3] w-full object-cover md:aspect-square;
+    border-radius: 4px 4px 4px 64px;
+    border-right: 8px solid var(--accent);
+  }
+
+  .panel {
+    background: rgb(26 26 30 / 80%);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: var(--card-padding);
+  }
+
+  .idea-image {
+    border-radius: calc(var(--radius) - var(--card-padding));
+    overflow: hidden;
+    background: var(--canvas);
+  }
+
+  .button-primary,
+  .button-secondary,
+  .field {
+    @apply rounded-lg px-4 py-2.5 text-sm;
+  }
+
+  .button-primary,
+  .button-secondary {
+    @apply inline-flex items-center justify-center gap-2 font-semibold transition-colors;
+  }
+
+  .button-primary {
+    background: var(--accent);
+    color: #1b1031;
+  }
+  .button-primary:hover:not(:disabled) {
+    background: #ded2ff;
+  }
+  .button-secondary,
+  .field {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: inherit;
+  }
+  .button-secondary:hover {
+    border-color: var(--accent);
+  }
+  .field::placeholder {
+    color: var(--muted);
+  }
+
+  .heart-button {
+    @apply absolute top-2 right-2 grid size-10 place-items-center rounded-lg bg-zinc-950 text-white;
+  }
+  .heart-button[aria-pressed="true"] {
+    color: var(--accent);
+  }
+  .heart-button[aria-pressed="true"] svg {
+    fill: currentColor;
+  }
 }

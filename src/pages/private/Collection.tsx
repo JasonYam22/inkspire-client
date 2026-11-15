@@ -1,107 +1,91 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { Heart } from "lucide-react";
 import { getCollection, toggleSaveIdea } from "../../services/ideas.services";
 import type { ExploreIdea } from "../../types";
-import { Link } from "react-router-dom";
-import { HeartIcon } from "lucide-react";
+import IdeaCard from "../../components/IdeaCard";
+import Loading from "../../components/Loading";
 
 function Collection() {
   const [collection, setCollection] = useState<ExploreIdea[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [removeError, setRemoveError] = useState("");
+  const [removingId, setRemovingId] = useState("");
 
-   useEffect(() => {
+  useEffect(() => {
     getCollection()
-      .then((data) => setCollection(data))
-      .catch((error) => console.log(error));
+      .then(setCollection)
+      .catch(() => setLoadError(true))
+      .then(() => setIsLoading(false));
   }, []);
 
-  const handleToggleSave = async (ideaId: string) => {
-    try {
-      const res = await toggleSaveIdea(ideaId)
+  const handleRemove = async (idea: ExploreIdea) => {
+    setRemovingId(idea.id);
+    setRemoveError("");
 
-      // If unhearted, filter it out of the Collection page immediately
-      if (!res.isSaved) {
-        setCollection((prev) => prev.filter((idea) => idea.id !== ideaId));
+    try {
+      const { isSaved } = await toggleSaveIdea(idea.id);
+      if (!isSaved) {
+        setCollection((current) =>
+          current.filter((item) => item.id !== idea.id),
+        );
       }
-    } catch (error) {
-      console.error("Error un-saving idea:", error);
+    } catch {
+      setRemoveError(`Couldn’t remove “${idea.title}”. Try again.`);
     }
+
+    setRemovingId("");
   };
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-white mt-4 mb-1 px-6">My Collection</h1>
-      <p className="text-white/70 mb-6 px-6">
-        Tattoo designs you've hearted from Explore.
-      </p>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 max-w-5xl mx-auto">
-        {collection.length === 0 ? (
-          <p className="text-zinc-400 col-span-3 text-center py-10">
-            No saved tattoos yet. Heart items in Explore to see them here!
+    <main className="page">
+      <h1 className="page-title mb-6">Saved tattoo ideas</h1>
+      {isLoading && <Loading label="Loading saved ideas…" />}
+      {loadError && (
+        <p role="alert" className="text-red-300">
+          Couldn’t load your Collection. Refresh to try again.
+        </p>
+      )}
+      {removeError && (
+        <p role="alert" className="mb-4 text-red-300">
+          {removeError}
+        </p>
+      )}
+      {!isLoading && !loadError && collection.length === 0 && (
+        <div className="space-y-4">
+          <p className="muted">
+            Nothing saved yet. See something you like in Explore? Tap the heart.
           </p>
-        ) : (
-          collection.map((idea) => (
-            <div
-              key={idea.id}
-              className="group flex flex-col w-full max-w-xs mx-auto bg-zinc-800/70 backdrop-blur-md border border-zinc-700 rounded-3xl p-3 shadow-lg hover:-translate-y-1 hover:border-zinc-500 hover:shadow-2xl transition-all duration-300"
-            >
-              {/* Card Image Header with Unheart Button */}
-              <div className="relative h-52 rounded-2xl overflow-hidden bg-zinc-700">
-                {idea.imageUrl ? (
-                  <img
-                    src={idea.imageUrl}
-                    alt={idea.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-zinc-500 text-xs font-medium uppercase tracking-wider">
-                    No Image
-                  </div>
-                )}
-
-                {/* Heart Button (Clicking removes from collection) */}
-                <button
-                  onClick={() => handleToggleSave(idea.id)}
-                  className="absolute top-3 right-3 z-10 p-2 rounded-full bg-zinc-900/60 backdrop-blur-md hover:bg-zinc-900/90 transition-all cursor-pointer"
-                >
-                  <HeartIcon className="w-5 h-5 text-red-500 fill-red-500" />
-                </button>
-              </div>
-
-              {/* Card Content */}
-              <div className="flex flex-col gap-2 flex-1 px-2 pt-4 pb-2">
-                <h2 className="text-base font-bold text-zinc-100 truncate">
-                  {idea.title}
-                </h2>
-
-                <div className="text-xs text-zinc-400 space-y-0.5">
-                  {idea.genre && (
-                    <p className="truncate">
-                      Genre: <span className="text-zinc-200 font-medium">{idea.genre}</span>
-                    </p>
-                  )}
-                  {idea.spot && (
-                    <p className="truncate">
-                      Spot: <span className="text-zinc-200 font-medium">{idea.spot}</span>
-                    </p>
-                  )}
-                </div>
-
-                <p className="mt-auto text-xs text-zinc-500">
-                  by <span className="text-zinc-300 font-medium">{idea.user?.username}</span>
-                </p>
-
-                <Link
-                  to={`/explore/${idea.id}`}
-                  className="block w-full text-center py-2 text-xs font-semibold rounded-xl bg-zinc-200 text-zinc-900 hover:bg-white transition-all"
-                >
-                  View details
-                </Link>
-              </div>
-            </div>
-          ))
-        )}
+          <Link to="/explore" className="button-primary">
+            Explore tattoo ideas
+          </Link>
+        </div>
+      )}
+      <div className="idea-grid">
+        {collection.map((idea) => (
+          <IdeaCard
+            key={idea.id}
+            tattooIdea={idea}
+            to={`/explore/${idea.id}`}
+            author={idea.user?.username}
+            action={
+              <button
+                type="button"
+                onClick={() => handleRemove(idea)}
+                disabled={Boolean(removingId)}
+                aria-busy={removingId === idea.id}
+                aria-label={`Remove ${idea.title} from Collection`}
+                aria-pressed="true"
+                className="heart-button"
+              >
+                <Heart aria-hidden="true" className="size-5" />
+              </button>
+            }
+          />
+        ))}
       </div>
-    </div>
+    </main>
   );
 }
 
